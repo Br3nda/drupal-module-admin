@@ -18,7 +18,7 @@ INSTALLATION
    following line to your theme's page.tpl.php file immediately
    following the <body> tag:
 
-   <?php !empty($admin) print $admin; ?>
+   <?php if (!empty($admin)) print $admin; ?>
 
 4. Admin makes 2 different permissions available:
 
