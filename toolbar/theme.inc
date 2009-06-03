@@ -33,5 +33,5 @@ function admin_preprocess_admin_toolbar(&$vars) {
  * Theme function for contextual popups.
  */
 function admin_preprocess_admin_links(&$vars) {
-  $vars['links'] = implode("\n", $vars['links']);
+  $vars['links'] = is_array($vars['links']) && !empty($vars['links']) ? implode("\n", $vars['links']) : '';
 }
