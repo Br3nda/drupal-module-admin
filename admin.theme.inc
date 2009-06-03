@@ -34,7 +34,7 @@ function _admin_init_theme() {
  * Generate the 1st level of navigation links under 'admin'.
  */
 function admin_navigation_primary() {
-  $tree = menu_tree_page_data();
+  $tree = menu_tree_all_data();
   foreach ($tree as $item) {
     if ($item['link']['link_path'] == 'admin' && !empty($item['below'])) {
       return admin_menu_navigation_links($item['below']);

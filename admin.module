@@ -10,7 +10,12 @@ function admin_init() {
 
   // Initialize the "null" theme -- in effect, bypass the theme system
   // entirely so we can load our own theme into place.
-  if (arg(0) == 'admin' && (arg(1) .'/'. arg(2) != 'build/block') && variable_get('admin_theme', 'admin') == 'admin') {
+  $item = menu_get_item();
+  if (variable_get('node_admin_theme', 0) && in_array($item['page_callback'], array('node_add', 'node_add_page', 'node_page_edit'))) {
+    module_load_include('inc', 'admin', 'admin.theme');
+    _admin_init_theme();
+  }
+  else if (arg(0) == 'admin' && (arg(1) .'/'. arg(2) != 'build/block') && variable_get('admin_theme', 'admin') == 'admin') {
     module_load_include('inc', 'admin', 'admin.theme');
     _admin_init_theme();
   }
