@@ -1,0 +1,574 @@
+<?php
+
+/**
+ * Implementation of hook_init().
+ */
+function admin_init() {
+  $path = drupal_get_path('module', 'admin');
+  drupal_add_js($path .'/toolbar/admin_toolbar.js');
+  drupal_add_css($path .'/toolbar/admin_toolbar.css');
+
+  // Initialize the "null" theme -- in effect, bypass the theme system
+  // entirely so we can load our own theme into place.
+  if (arg(0) == 'admin' && (arg(1) .'/'. arg(2) != 'build/block') && variable_get('admin_theme', 'admin') == 'admin') {
+    module_load_include('inc', 'admin', 'admin.theme');
+    _admin_init_theme();
+  }
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function admin_menu_alter(&$items) {
+  // Move admin theme settings to theme local task.
+  $items['admin/build/themes/admin'] = $items['admin/settings/admin'];
+  $items['admin/build/themes/admin']['type'] = MENU_LOCAL_TASK;
+  $items['admin/build/themes/admin']['weight'] = 10;
+  unset($items['admin/settings/admin']);
+
+  // Gather site settings under local tasks
+  $items['admin/settings/site'] =
+  $items['admin/settings/site/information'] =
+  $items['admin/settings/site-information'];
+  unset($items['admin/settings/site-information']);
+
+  $items['admin/settings/site']['title'] = 'Site settings';
+  $items['admin/settings/site/information']['title'] = 'Information';
+  $items['admin/settings/site/information']['type'] = MENU_DEFAULT_LOCAL_TASK;
+
+  $items['admin/settings/site/clean-urls'] = $items['admin/settings/clean-urls'];
+  $items['admin/settings/site/clean-urls']['type'] = MENU_LOCAL_TASK;
+  $items['admin/settings/site/clean-urls']['weight'] = 10;
+  unset($items['admin/settings/clean-urls']);
+
+  $items['admin/settings/site/error-reporting'] = $items['admin/settings/error-reporting'];
+  $items['admin/settings/site/error-reporting']['type'] = MENU_LOCAL_TASK;
+  $items['admin/settings/site/error-reporting']['weight'] = 10;
+  unset($items['admin/settings/error-reporting']);
+
+  $items['admin/settings/site/file-system'] = $items['admin/settings/file-system'];
+  $items['admin/settings/site/file-system']['type'] = MENU_LOCAL_TASK;
+  $items['admin/settings/site/file-system']['weight'] = 10;
+  unset($items['admin/settings/file-system']);
+
+  // Generate additional items for use in the menu
+  $items = array_merge($items, admin_menu_clone_items('node/add', 'admin/content/add', $items));
+  $items = array_merge($items, admin_menu_clone_items('admin/build/themes', 'admin/themes', $items));
+  $items = array_merge($items, admin_menu_clone_items('admin/build/modules', 'admin/modules', $items));
+
+  // Expose a small subset of the most usable core admin pages.
+  // Other pages can be exposed simply by adding ['options']['admin'] = TRUE
+  // to items in hook_menu().
+  $include = array(
+    'admin/content' => 'Content',
+    'admin/content/add' => 'Add',
+    'admin/content/node' => 'Edit',
+
+    'admin/build' => 'Structure',
+    'admin/build/views' => '',
+    'admin/build/block' => '',
+    'admin/build/menu' => '',
+
+    'admin/user' => 'People',
+    'admin/user/permissions' => '',
+    'admin/user/user' => '',
+
+    'admin/settings' => 'Configuration',
+    'admin/settings/date-time' => '',
+    'admin/settings/filters' => '',
+    'admin/settings/language' => '',
+    'admin/settings/performance' => '',
+    'admin/settings/site' => '',
+
+    'admin/themes' => 'Appearance',
+    'admin/modules' => '',
+  );
+  foreach ($include as $path => $title) {
+    if (!empty($items[$path])) {
+      $items[$path]['title'] = !empty($title) ? $title : $items[$path]['title'];
+      $items[$path]['options']['admin'] = TRUE;
+    }
+  }
+
+  // Apparently node/add has no description. Add one.
+  $items['admin/content/add']['description'] = 'Create new content on your site.';
+  $items['admin/content/add']['weight'] = -20;
+  $items['admin/content/node']['weight'] = -19;
+}
+
+/**
+ * Helper to clone portions of the menu tree to a duplicate location.
+ */
+function admin_menu_clone_items($search, $replace, $items) {
+  $offset = count(explode('/', $replace)) - count(explode('/', $search));
+
+  $clone = array();
+  foreach ($items as $path => $item) {
+    if (strpos($path, $search) === 0) {
+      $clone_path = str_replace($search, $replace, $path);
+
+      // Adjust argument offsets if the search and replace paths have a
+      // different arg counts.
+      if ($offset != 0) {
+        foreach (array('page arguments', 'access arguments', 'load arguments', 'title arguments') as $arg_key) {
+          if (!empty($item[$arg_key])) {
+            foreach ($item[$arg_key] as $k => $v) {
+              if (is_numeric($v)) {
+                $item[$arg_key][$k] = $v + $offset;
+              }
+            }
+          }
+        }
+      }
+
+      $clone[$clone_path] = $item;
+    }
+  }
+  return $clone;
+}
+
+/**
+ * Implementation of hook_form_alter() for system_admin_theme_settings.
+ */
+function admin_form_system_admin_theme_settings_alter(&$form) {
+  // Add in our stealth theme as an option
+  $form['admin_theme']['#options']['admin'] = t('Admin');
+}
+
+/**
+ * Implementation of hook_form_alter() for node_filter_form.
+ */
+function admin_form_node_admin_content_alter(&$form) {
+  // If the admin theme has been inited, do some additional work.
+  global $theme;
+  if ($theme == 'admin') {
+    unset($form['admin']['options']['#type']);
+    unset($form['admin']['options']['#prefix']);
+    unset($form['admin']['options']['#suffix']);
+    $form['admin']['options']['#theme'] = 'admin_manage_options';
+  }
+}
+
+function admin_form_user_admin_account_alter(&$form) {
+  // If the admin theme has been inited, do some additional work.
+  global $theme;
+  if ($theme == 'admin') {
+    unset($form['options']['#type']);
+    unset($form['options']['#prefix']);
+    unset($form['options']['#suffix']);
+    $form['options']['#theme'] = 'admin_manage_options';
+  }
+}
+
+/**
+ * Implementation of hook_system_info_alter().
+ * Throw a flag that tells us we need to reinstantiate the admin theme.
+ */
+function admin_system_info_alter(&$info, &$theme) {
+ static $once;
+  if (!isset($once)) {
+    $once = TRUE;
+    variable_set('admin_theme_invalidated', TRUE);
+  }
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function admin_perm() {
+  return array('admin menu', 'admin inline');
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function admin_theme($cache, $type, $theme, $path) {
+  $items = array();
+  $items['admin_toolbar'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'admin-toolbar',
+    'path' => drupal_get_path('module', 'admin') .'/toolbar',
+    'file' => 'theme.inc',
+  );
+  $items['admin_links'] = array(
+    'arguments' => array('links' => array()),
+    'template' => 'admin-links',
+    'path' => drupal_get_path('module', 'admin') .'/toolbar',
+    'file' => 'theme.inc',
+  );
+  $items['admin_manage_options'] = array(
+    'arguments' => array('form' => array()),
+    'path' => drupal_get_path('module', 'admin') .'/theme',
+    'file' => 'template.php',
+  );
+  return $items;
+}
+
+
+/**
+ * Set wrapper around admin_links_cache().
+ */
+function admin_links_set($type, $id, $link) {
+  admin_links_cache('set', $type, $id, $link);
+}
+
+/**
+ * Get wrapper around admin_links_cache().
+ */
+function admin_links_get($type, $id) {
+  return admin_links_cache('get', $type, $id);
+}
+
+/**
+ * Static cache function which allows different parts of the page load
+ * to add contextual admin links to different object types (nodes,
+ * blocks, etc). They are retrieved all at once at the final "rendering"
+ * stages.
+ */
+function admin_links_cache($op = 'set', $type, $id, $link = NULL) {
+  static $cache;
+  if (!isset($cache)) {
+    $cache = array();
+  }
+  switch ($op) {
+    case 'set':
+      if (!isset($cache[$type])) {
+        $cache[$type] = array();
+      }
+      if (!isset($cache[$type][$id])) {
+        $cache[$type][$id] = array();
+      }
+      if ($link) {
+        $cache[$type][$id][] = $link;
+      }
+      break;
+    case 'get':
+      if (isset($cache[$type][$id])) {
+        return $cache[$type][$id];
+      }
+      else {
+        return array();
+      }
+      break;
+  }
+}
+
+/**
+ * Helper function which centralizes link creation for different object
+ * types. Not actually sure if this is a good idea -- may split up.
+ */
+function admin_admin_link($hook, $params = array()) {
+  $options = array('query' => 'destination='. $_GET['q']);
+  switch ($hook) {
+    case 'node':
+      if (user_access('administer nodes')) {
+        $edit = $delete = $translate = $options;
+
+        $output = '';
+        if (isset($params['node']->translation)) {
+          $output .= l(t('Translate'), 'node/'. $params['node']->nid .'/translation', $options);
+        }
+
+        $edit['attributes'] = array('class' => 'icon-edit');
+        $output .= l(t('Edit'), "node/{$params['node']->nid}/edit", $edit);
+
+        $delete['attributes'] = array('class' => 'icon-delete');
+        $output .= l(t('Delete'), "node/{$params['node']->nid}/delete", $delete);
+        return $output;
+      }
+      break;
+    case 'block':
+      if (user_access('administer blocks')) {
+        $configure = $options;
+        $configure['attributes'] = array('class' => 'icon-configure');
+        return l(t('Configure'), "admin/build/block/configure/{$params['module']}/{$params['delta']}", $configure);
+      }
+      break;
+    case 'nodequeue':
+      if (user_access('manipulate queues')) {
+        return l(t("Manage queue"), "admin/content/nodequeue/". $params['qid'] ."/view", $options);
+      }
+      break;
+    case 'views':
+      if (user_access('administer views')) {
+        $edit['attributes'] = array('class' => 'icon-edit');
+        return l(t("Edit view"), "admin/build/views/edit/{$params['view']}", $edit);
+      }
+      break;
+  }
+  return '';
+}
+
+/**
+ * Implementation of hook_views_pre_view().
+ */
+function admin_views_pre_view(&$view, $display_id, $args) {
+  if (user_access('admin inline')) {
+    $links = array();
+
+    // Default view links (edit view)
+    $links[] = admin_admin_link('views', array('view' => $view->name));
+
+    // Helper nodequeue link for administrators
+    if (module_exists('nodequeue') && user_access("manipulate queues")) {
+      $display_id = $view->current_display;
+      $relationships = $view->display[$display_id]->handler->get_option('relationships');
+      if (isset($relationships['nodequeue_rel']) && isset($relationships['nodequeue_rel']['qids']) && count($relationships['nodequeue_rel']['qids'])) {
+        reset($relationships['nodequeue_rel']['qids']);
+        $qid = current($relationships['nodequeue_rel']['qids']);
+        $links[] = admin_admin_link('nodequeue', array('qid' => $qid));
+      }
+    }
+
+    $row_plugin = $view->display_handler->get_option('row_plugin');
+
+    // Bail on attachment views
+    if (get_class($view->display_handler) === 'views_plugin_display_attachment') {
+      return;
+    }
+    // If this is a block view, merge links into the respective block
+    else if (get_class($view->display_handler) === 'views_plugin_display_block') {
+      foreach ($links as $link) {
+        admin_links_set('block', "views-{$view->name}-{$view->current_display}", $link);
+      }
+    }
+    // Ensure the view popups and node popups don't collide
+    else if ($row_plugin != 'node') {
+      foreach ($links as $link) {
+        admin_links_set('views', $view->name .'-'. $view->current_display, $link);
+      }
+    }
+  }
+}
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ */
+function admin_theme_registry_alter(&$theme_registry) {
+  $hooks = array(
+    'page',
+    'block',
+    'views_view',
+    'views_view_table',
+    'node',
+  );
+  foreach ($hooks as $hook) {
+    if (empty($theme_registry[$hook]['preprocess functions']) || !in_array('admin_preprocess_'. $hook, $theme_registry[$hook]['preprocess functions'])) {
+      $theme_registry[$hook]['preprocess functions'][] = 'admin_preprocess_'. $hook;
+    }
+  }
+  // If the admin theme has been inited, do some additional work.
+  global $theme;
+  if ($theme == 'admin') {
+    // Slap a preprocessor on at the very front of the stack for rebuilding the admin theme.
+    if (!in_array('admin_page_alter', $theme_registry['page']['preprocess functions'])) {
+      array_unshift($theme_registry['page']['preprocess functions'], 'admin_page_alter');
+    }
+    $overrides = array('fieldset', 'node_form', 'system_settings_form', 'admin_block_content');
+    foreach ($overrides as $hook) {
+      $theme_registry[$hook]['function'] = 'admin_'. $hook;
+    }
+  }
+}
+
+/**
+ * Page preprocessor that runs before any others (including template_preprocess_page()).
+ * Check the theme rebuild flag and do so if necessary.
+ */
+function admin_page_alter(&$vars) {
+  _admin_theme_rebuild();
+}
+
+/**
+ * Implementation of hook_preprocess_page().
+ */
+function admin_preprocess_page(&$vars) {
+  // @TODO: merge multiple menus rather than just using the first
+  if (user_access('admin menu')) {
+    $links = admin_menu_tree();
+    $links = theme('admin_toolbar', $links);
+    $vars['admin'] = $links;
+  }
+  else {
+    $vars['admin'] = '';
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_views_view().
+ */
+function admin_preprocess_views_view(&$vars) {
+  if (user_access('admin inline')) {
+    // Retrieve link cache
+    $vid = $vars['view']->name .'-'. $vars['view']->current_display;
+    $links = admin_links_get('views', $vid);
+
+    if ($links) {
+      // Add admin links
+      $vars['pager'] .= theme('admin_links', $links);
+    }
+    $vars['admin_links'] = '';
+    $vars['admin_links_raw'] = '';
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_block().
+ */
+function admin_preprocess_block(&$vars) {
+  if (user_access('admin inline')) {
+    if (!empty($vars['block']->module) && !empty($vars['block']->delta)) {
+      $bid = $vars['block']->module .'-'. $vars['block']->delta;
+
+      // If this is a custom block, we need to catch it here + add links!
+      switch ($vars['block']->module) {
+        case 'block':
+          $link = admin_admin_link('block', array('module' => 'block', 'delta' => $vars['block']->delta));
+          admin_links_set('block', $bid, $link);
+          break;
+        case 'menu':
+          $link = l(t('Edit menu'), "admin/build/menu-customize/{$vars['block']->delta}", array('query' => "destination={$_GET['q']}"));
+          admin_links_set('block', $bid, $link);
+          break;
+      }
+
+      // Retrieve link cache
+      $links = admin_links_get('block', $bid);
+
+      // Add admin links
+      $vars['block']->content .= theme('admin_links', $links);
+    }
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_node().
+ */
+function admin_preprocess_node(&$vars) {
+  if (user_access('admin inline')) {
+    // Set link cache
+    $link = admin_admin_link('node', array('node' => $vars['node']));
+    admin_links_set('node', $vars['node']->nid, $link);
+
+    // Retrieve link cache
+    $links = admin_links_get('node', $vars['nid']);
+    $vars['content'] .= theme('admin_links', $links);
+  }
+}
+
+/**
+ * Retrieve a hierarchy of links representing select portions of the
+ * 'admin' branch of the navigation menu.
+ */
+function admin_menu_tree() {
+  $parents = array();
+
+  $trail = menu_get_active_trail();
+  foreach ($trail as $item) {
+    if (!empty($item['mlid'])) {
+      $parents[] = $item['mlid'];
+    }
+  }
+
+  $tree = menu_tree_data(db_query("
+    SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
+    FROM {menu_links} ml LEFT JOIN {menu_router} m ON m.path = ml.router_path
+    WHERE ml.menu_name = '%s'
+      AND ml.link_path LIKE 'admin%'
+      AND ml.depth > 1
+      AND ml.depth < 4
+    ORDER BY p1 ASC, p2 ASC, p3 ASC, p4 ASC, p5 ASC, p6 ASC, p7 ASC, p8 ASC, p9 ASC", 'navigation'), $parents);
+  // @TODO: Cache here!
+
+  menu_tree_check_access($tree);
+
+  $links = array();
+  admin_menu_tree_links($tree, $links);
+
+  // Add user-specific links
+  global $user;
+  $user_links = array();
+  $user_links[] = array(
+    'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
+    'href' => 'user',
+    'html' => TRUE
+  );
+  $user_links[] = array('title' => t('Logout'), 'href' => "logout");
+  $links[0]['user'] = $user_links;
+
+  return $links;
+}
+
+/**
+ * Generate a links array from a menu tree array.
+ */
+function admin_menu_navigation_links($tree, $admin_only = FALSE) {
+  $links = array();
+  foreach ($tree as $item) {
+    if (!$item['link']['hidden'] && (!$admin_only || !empty($item['link']['options']['admin']))) {
+      $class = '';
+      $id = str_replace('/', '-', $item['link']['href']);
+
+      $l = $item['link']['localized_options'];
+      $l['href'] = $item['link']['href'];
+      $l['title'] = "<span class='icon'></span>". $item['link']['title'];
+      $l['attributes'] = array('id' => 'admin-link-'. $id);
+      $l['html'] = TRUE;
+
+      $class = ' path-'. $id;
+      if ($item['link']['in_active_trail']) {
+        $class .= ' active-trail';
+      }
+      // Keyed with the unique mlid to generate classes in theme_links().
+      $links['menu-'. $item['link']['mlid'] . $class] = $l;
+    }
+  }
+  return $links;
+}
+
+/**
+ * Build a hierarchy of $links arrays suitable for theme_links() from a
+ * menu tree.
+ */
+function admin_menu_tree_links($tree, &$links, $parent = 'admin', $depth = 0) {
+  // Create a single level of links.
+  $links[$depth][$parent] = array();
+  $l = admin_menu_navigation_links($tree, TRUE);
+  if (!empty($l)) {
+    $links[$depth][$parent] = $l;
+  }
+
+  // Recurse
+  foreach ($tree as $item) {
+    if (!$item['link']['hidden'] && !empty($item['link']['options']['admin'])) {
+      if (!empty($item['below'])) {
+        admin_menu_tree_links($item['below'], $links, $item['link']['href'], $depth + 1);
+      }
+    }
+  }
+}
+
+/**
+ * Rebuild the admin theme entry in the database.
+ */
+function _admin_theme_rebuild($force = FALSE) {
+  if (arg(0) == 'admin') {
+    $exists = db_result(db_query("SELECT count(*) FROM {system} WHERE name = 'admin' AND type = 'theme'"));
+    $force = !$exists ? TRUE : $force;
+  }
+  if ($force || variable_get('admin_theme_invalidated', FALSE)) {
+    $path = drupal_get_path('module', 'admin') .'/theme';
+
+    $theme = new StdClass();
+    $theme->name = 'admin';
+    $theme->filename = "{$path}/admin.theme.info";
+    $theme->engine = 'phptemplate';
+    $theme->owner = drupal_get_path('theme_engine', 'phptemplate') .'/phptemplate.engine';
+    $theme->info = system_theme_default();
+
+    db_query("DELETE FROM {system} WHERE name = 'admin' AND type = 'theme'");
+    db_query("INSERT INTO {system} (name, owner, info, type, filename, status, throttle, bootstrap) VALUES ('%s', '%s', '%s', '%s', '%s', %d, %d, %d)", $theme->name, $theme->owner, serialize($theme->info), 'theme', $theme->filename, isset($theme->status) ? $theme->status : 0, 0, 0);
+  
+    variable_set('admin_theme_invalidated', FALSE);
+  }
+}

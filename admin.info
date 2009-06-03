@@ -1,0 +1,4 @@
+name = "Admin"
+description = "Drupal administration UI helpers. Includes: admin menu, contextual administration links, admin theme."
+package = "Administration"
+core = 6.x
