@@ -88,9 +88,13 @@ hr { display:none; }
   }
 
 #branding h1.site-name {
+  width:160px;
+  overflow:hidden;
+
   position:absolute;
   top:10px;
   left:20px;
+
   color:#ccc;
   font-size:11px;
   text-transform:uppercase;
