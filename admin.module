@@ -209,6 +209,21 @@ function admin_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
+/**
+ * Wrapper to check whether various admin features are accessible to the
+ * current user and compatible with the current theme.
+ */
+function admin_is_enabled($op = 'admin menu') {
+  if (user_access($op)) {
+    global $theme_info;
+    // If the theme does not specify some flag for this feature, assume
+    // it is compatible.
+    if (!isset($theme_info->info['admin'][$op]) || (isset($theme_info->info['admin'][$op]) && !empty($theme_info->info['admin'][$op]))) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
 
 /**
  * Set wrapper around admin_links_cache().
@@ -308,7 +323,7 @@ function admin_admin_link($hook, $params = array()) {
  * Implementation of hook_views_pre_view().
  */
 function admin_views_pre_view(&$view, $display_id, $args) {
-  if (user_access('admin inline')) {
+  if (admin_is_enabled('admin inline')) {
     $links = array();
 
     // Default view links (edit view)
@@ -389,7 +404,7 @@ function admin_page_alter(&$vars) {
  */
 function admin_preprocess_page(&$vars) {
   // @TODO: merge multiple menus rather than just using the first
-  if (user_access('admin menu')) {
+  if (admin_is_enabled('admin menu')) {
     $links = admin_menu_tree();
     $links = theme('admin_toolbar', $links);
     $vars['admin'] = $links;
@@ -403,7 +418,7 @@ function admin_preprocess_page(&$vars) {
  * Implementation of hook_preprocess_views_view().
  */
 function admin_preprocess_views_view(&$vars) {
-  if (user_access('admin inline')) {
+  if (admin_is_enabled('admin inline')) {
     // Retrieve link cache
     $vid = $vars['view']->name .'-'. $vars['view']->current_display;
     $links = admin_links_get('views', $vid);
@@ -421,7 +436,7 @@ function admin_preprocess_views_view(&$vars) {
  * Implementation of hook_preprocess_block().
  */
 function admin_preprocess_block(&$vars) {
-  if (user_access('admin inline')) {
+  if (admin_is_enabled('admin inline')) {
     if (!empty($vars['block']->module) && !empty($vars['block']->delta)) {
       $bid = $vars['block']->module .'-'. $vars['block']->delta;
 
@@ -450,7 +465,7 @@ function admin_preprocess_block(&$vars) {
  * Implementation of hook_preprocess_node().
  */
 function admin_preprocess_node(&$vars) {
-  if (user_access('admin inline')) {
+  if (admin_is_enabled('admin inline')) {
     // Set link cache
     $link = admin_admin_link('node', array('node' => $vars['node']));
     admin_links_set('node', $vars['node']->nid, $link);

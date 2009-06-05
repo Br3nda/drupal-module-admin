@@ -20,7 +20,10 @@ INSTALLATION
 
    <?php if (!empty($admin)) print $admin; ?>
 
-4. Admin makes 2 different permissions available:
+4. Admin makes 2 different permissions available. In addition to using
+   these permissions to enable/disable admin features for different
+   roles, specific themes can specify their compatibility (see
+   'Theme compatibility' below).
 
    'admin inline': Grant users access to inline contextual links for
      editing nodes, views, blocks, etc.
@@ -36,6 +39,23 @@ AJ Ashton specifically for use with Drupal's admin interface.
 The iconset is available for use under a dual GPL/BSD license,
 meaning you may choose the license which is most appropriate for
 your project.
+
+
+THEME COMPATIBILITY
+===================
+
+A theme can specify its compatibility with different features
+provided by the admin module in its .info file. If no compatibility
+flag is set, admin assumes the theme is compatible with all of its
+features.
+
+To disable the admin menu when using your theme:
+
+  admin[admin menu] = 0
+
+To disable the admin inline links when using your theme:
+
+  admin[admin inline] = 0
 
 
 API

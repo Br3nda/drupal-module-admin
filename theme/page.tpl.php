@@ -38,7 +38,7 @@
       <?php if ($secondary_links): ?><?php print l(t('Expand'), $_GET['q'], array('attributes' => array('class' => 'subnav-toggle'))) ?><?php endif; ?>
       <h2 class='page-title'><?php print $title ?></h2>
       <?php if ($primary_local_tasks): ?><ul class='tabs primary'><?php print $primary_local_tasks ?></ul><?php endif; ?>
-      <?php if ($context_links): ?><div class='tools'><?php print $context_links ?></div><?php endif; ?>
+      <?php if (!empty($context_links)): ?><div class='tools'><?php print $context_links ?></div><?php endif; ?>
     </div>
   <?php endif; ?>
 
