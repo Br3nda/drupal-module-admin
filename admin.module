@@ -15,7 +15,7 @@ function admin_init() {
     module_load_include('inc', 'admin', 'admin.theme');
     _admin_init_theme();
   }
-  else if (arg(0) == 'admin' && (arg(1) .'/'. arg(2) != 'build/block') && variable_get('admin_theme', 'admin') == 'admin') {
+  else if (arg(0) == 'admin' && ($item['page_callback'] != 'block_admin_display') && variable_get('admin_theme', 'admin') == 'admin') {
     module_load_include('inc', 'admin', 'admin.theme');
     _admin_init_theme();
   }
