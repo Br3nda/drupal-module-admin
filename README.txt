@@ -58,38 +58,23 @@ To disable the admin inline links when using your theme:
   admin[admin inline] = 0
 
 
-API
-===
+API & HOOKS
+===========
 
-There is a small API included in admin for adding contextual popup
-links to various Drupal objects.
+There is a small API included in admin for adding inline links to
+various objects. The hooks are parallel to hook_link() and
+hook_link_alter(), except that they are used for admin inline links
+only. The admin-edit, admin-delete, and admin-configure classes
+are available for rendering links with icons (more to come).
 
-You can currently add an admin link to a block, node or view at any
-time during page generation BEFORE the respective item is themed.
+- hook_admin_link($type, $object)
 
-To add a link you can use the admin_links_set() function. You need
-to specify the $type, $id, and $link parameters. Here are some
-examples.
+  Should return a $links array suitable for theming by theme_links().
 
-Example 1: from within hook_block():
+- hook_admin_link_alter(&$links, $type, $object)
 
-if (module_exists('admin')) {
-  $link = l(t('Configure me'), 'path/to/my/settings/page');
-  admin_links_set('block', 'mymodule-delta', $link);
-}
-
-Example 2: from within hook_views_pre_view():
-
-if (module_exists('admin')) {
-  $link = admin_admin_link('views', array('view' => $view->name));
-  admin_links_set('views', $view->name .'-'. $display_id, $link);
-}
-
-In this case, we use the helper function admin_admin_link(). It is
-just that -- a helper function for generating some common admin links.
-It also does some nice things like add &destination=$_GET['q'] to the
-query string to send the user back to the current page after they
-finish editing a view.
+  A typical drupal_alter() hook that takes the links array, as well
+  as object type and object as parameters.
 
 
 CONTRIBUTORS

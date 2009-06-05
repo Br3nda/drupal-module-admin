@@ -1,4 +1,4 @@
-/* $Id: admin_toolbar.css,v 1.1 2009/06/03 06:50:54 yhahn Exp $ */
+/* $Id: admin_toolbar.css,v 1.1.2.1 2009/06/05 07:11:13 yhahn Exp $ */
 
 /**
  * Aggressive resets so we can achieve a consistent look in
@@ -120,6 +120,7 @@ div.admin-links a:hover {
 
   div.admin-links a.icon-delete { background-position:-215px -135px; }
   div.admin-links a.icon-edit { background-position:-215px -160px; }
+  div.admin-links a.icon-configure { background-position:-215px -185px; }
 
 /**
  * Base styles

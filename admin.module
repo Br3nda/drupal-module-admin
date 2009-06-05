@@ -226,139 +226,93 @@ function admin_is_enabled($op = 'admin menu') {
 }
 
 /**
- * Set wrapper around admin_links_cache().
+ * Retrieve the admin links for a given object.
  */
-function admin_links_set($type, $id, $link) {
-  admin_links_cache('set', $type, $id, $link);
-}
-
-/**
- * Get wrapper around admin_links_cache().
- */
-function admin_links_get($type, $id) {
-  return admin_links_cache('get', $type, $id);
-}
-
-/**
- * Static cache function which allows different parts of the page load
- * to add contextual admin links to different object types (nodes,
- * blocks, etc). They are retrieved all at once at the final "rendering"
- * stages.
- */
-function admin_links_cache($op = 'set', $type, $id, $link = NULL) {
-  static $cache;
-  if (!isset($cache)) {
-    $cache = array();
-  }
-  switch ($op) {
-    case 'set':
-      if (!isset($cache[$type])) {
-        $cache[$type] = array();
-      }
-      if (!isset($cache[$type][$id])) {
-        $cache[$type][$id] = array();
-      }
-      if ($link) {
-        $cache[$type][$id][] = $link;
-      }
-      break;
-    case 'get':
-      if (isset($cache[$type][$id])) {
-        return $cache[$type][$id];
-      }
-      else {
-        return array();
-      }
-      break;
-  }
-}
-
-/**
- * Helper function which centralizes link creation for different object
- * types. Not actually sure if this is a good idea -- may split up.
- */
-function admin_admin_link($hook, $params = array()) {
-  $options = array('query' => 'destination='. $_GET['q']);
-  switch ($hook) {
-    case 'node':
-      if (user_access('administer nodes')) {
-        $edit = $delete = $translate = $options;
-
-        $output = '';
-        if (isset($params['node']->translation)) {
-          $output .= l(t('Translate'), 'node/'. $params['node']->nid .'/translation', $options);
-        }
-
-        $edit['attributes'] = array('class' => 'icon-edit');
-        $output .= l(t('Edit'), "node/{$params['node']->nid}/edit", $edit);
-
-        $delete['attributes'] = array('class' => 'icon-delete');
-        $output .= l(t('Delete'), "node/{$params['node']->nid}/delete", $delete);
-        return $output;
-      }
-      break;
-    case 'block':
-      if (user_access('administer blocks')) {
-        $configure = $options;
-        $configure['attributes'] = array('class' => 'icon-configure');
-        return l(t('Configure'), "admin/build/block/configure/{$params['module']}/{$params['delta']}", $configure);
-      }
-      break;
-    case 'nodequeue':
-      if (user_access('manipulate queues')) {
-        return l(t("Manage queue"), "admin/content/nodequeue/". $params['qid'] ."/view", $options);
-      }
-      break;
-    case 'views':
-      if (user_access('administer views')) {
-        $edit['attributes'] = array('class' => 'icon-edit');
-        return l(t("Edit view"), "admin/build/views/edit/{$params['view']}", $edit);
-      }
-      break;
-  }
-  return '';
-}
-
-/**
- * Implementation of hook_views_pre_view().
- */
-function admin_views_pre_view(&$view, $display_id, $args) {
+function admin_get_links($type, $object) {
+  $links = array();
   if (admin_is_enabled('admin inline')) {
-    $links = array();
+    $links = module_invoke_all('admin_link', $type, $object);
+    drupal_alter('admin_link', $links, $type, $object);
+  }
+  return $links;
+}
 
-    // Default view links (edit view)
-    $links[] = admin_admin_link('views', array('view' => $view->name));
-
-    // Helper nodequeue link for administrators
-    if (module_exists('nodequeue') && user_access("manipulate queues")) {
-      $display_id = $view->current_display;
-      $relationships = $view->display[$display_id]->handler->get_option('relationships');
-      if (isset($relationships['nodequeue_rel']) && isset($relationships['nodequeue_rel']['qids']) && count($relationships['nodequeue_rel']['qids'])) {
-        reset($relationships['nodequeue_rel']['qids']);
-        $qid = current($relationships['nodequeue_rel']['qids']);
-        $links[] = admin_admin_link('nodequeue', array('qid' => $qid));
-      }
+/**
+ * Implementation of hook_admin_link() on behalf of the node module.
+ */
+function node_admin_link($type, $object) {
+  $links = array();
+  if ($type == 'node') {
+    if (node_access('update', $object)) {
+      $links['node-edit'] = array(
+        'title' => t('Edit'),
+        'href' => "node/{$object->nid}/edit",
+        'attributes' => array('class' => 'icon-edit'),
+        'query' => array('destination' => $_GET['q']),
+      );
     }
-
-    $row_plugin = $view->display_handler->get_option('row_plugin');
-
-    // Bail on attachment views
-    if (get_class($view->display_handler) === 'views_plugin_display_attachment') {
-      return;
-    }
-    // If this is a block view, merge links into the respective block
-    else if (get_class($view->display_handler) === 'views_plugin_display_block') {
-      foreach ($links as $link) {
-        admin_links_set('block', "views-{$view->name}-{$view->current_display}", $link);
-      }
-    }
-    // Ensure the view popups and node popups don't collide
-    else if ($row_plugin != 'node') {
-      foreach ($links as $link) {
-        admin_links_set('views', $view->name .'-'. $view->current_display, $link);
-      }
+    if (node_access('delete', $object)) {
+      $links['node-delete'] = array(
+        'title' => t('Delete'),
+        'href' => "node/{$object->nid}/delete",
+        'attributes' => array('class' => 'icon-delete'),
+        'query' => array('destination' => $_GET['q']),
+      );
     }
   }
+  return $links;
+}
+
+/**
+ * Implementation of hook_admin_link() on behalf of the block module.
+ */
+function block_admin_link($type, $object) {
+  $links = array();
+  if ($type == 'block') {
+    if (user_access('administer blocks')) {
+      $links['block-configure'] = array(
+        'title' => t('Configure'),
+        'href' => "admin/build/block/configure/{$object->module}/{$object->delta}",
+        'attributes' => array('class' => 'icon-configure'),
+        'query' => array('destination' => $_GET['q']),
+      );
+    }
+  }
+  return $links;
+}
+
+/**
+ * Implementation of hook_admin_link() on behalf of the views module.
+ */
+function views_admin_link($type, $object) {
+  $links = array();
+  $view_name = '';
+  if (user_access('administer views')) {
+    switch ($type) {
+      case 'block':
+        // If this is a Views block and not a special (exposed filter, etc.) block...
+        if ($object->module == 'views' && strpos($object->delta, '-') !== 0) {
+          $split = explode('-', $object->delta);
+          $view_name = array_shift($split);
+        }
+        break;
+      case 'views':
+        // Bail on block/attachment views or views using the node row plugin to prevent collisions.
+        if ($object->display_handler->get_option('row_plugin') != 'node' && !in_array(get_class($object->display_handler), array('views_plugin_display_attachment', 'views_plugin_display_block'))) {
+          $view_name = $object->name;
+        }
+        break;
+    }
+    if (!empty($view_name)) {
+      $links['views-edit'] = array(
+        'title' => t('Edit view'),
+        'href' => "admin/build/views/edit/{$view_name}",
+        'attributes' => array('class' => 'icon-edit'),
+        'query' => array('destination' => $_GET['q']),
+      );
+    }
+  }
+  return $links;
 }
 
 /**
@@ -369,7 +323,6 @@ function admin_theme_registry_alter(&$theme_registry) {
     'page',
     'block',
     'views_view',
-    'views_view_table',
     'node',
   );
   foreach ($hooks as $hook) {
@@ -418,62 +371,28 @@ function admin_preprocess_page(&$vars) {
  * Implementation of hook_preprocess_views_view().
  */
 function admin_preprocess_views_view(&$vars) {
-  if (admin_is_enabled('admin inline')) {
-    // Retrieve link cache
-    $vid = $vars['view']->name .'-'. $vars['view']->current_display;
-    $links = admin_links_get('views', $vid);
-
-    if ($links) {
-      // Add admin links
-      $vars['pager'] .= theme('admin_links', $links);
-    }
-    $vars['admin_links'] = '';
-    $vars['admin_links_raw'] = '';
+  $admin_links = theme('admin_links', admin_get_links('views', $vars['view']));
+  if ($admin_links) {
+    $vars['pager'] .= $admin_links;
   }
+
+  // Disable the Views admin links stack to prevent clutter.
+  $vars['admin_links'] = '';
+  $vars['admin_links_raw'] = '';
 }
 
 /**
  * Implementation of hook_preprocess_block().
  */
 function admin_preprocess_block(&$vars) {
-  if (admin_is_enabled('admin inline')) {
-    if (!empty($vars['block']->module) && !empty($vars['block']->delta)) {
-      $bid = $vars['block']->module .'-'. $vars['block']->delta;
-
-      // If this is a custom block, we need to catch it here + add links!
-      switch ($vars['block']->module) {
-        case 'block':
-          $link = admin_admin_link('block', array('module' => 'block', 'delta' => $vars['block']->delta));
-          admin_links_set('block', $bid, $link);
-          break;
-        case 'menu':
-          $link = l(t('Edit menu'), "admin/build/menu-customize/{$vars['block']->delta}", array('query' => "destination={$_GET['q']}"));
-          admin_links_set('block', $bid, $link);
-          break;
-      }
-
-      // Retrieve link cache
-      $links = admin_links_get('block', $bid);
-
-      // Add admin links
-      $vars['block']->content .= theme('admin_links', $links);
-    }
-  }
+  $vars['block']->content .= theme('admin_links', admin_get_links('block', $vars['block']));
 }
 
 /**
  * Implementation of hook_preprocess_node().
  */
 function admin_preprocess_node(&$vars) {
-  if (admin_is_enabled('admin inline')) {
-    // Set link cache
-    $link = admin_admin_link('node', array('node' => $vars['node']));
-    admin_links_set('node', $vars['node']->nid, $link);
-
-    // Retrieve link cache
-    $links = admin_links_get('node', $vars['nid']);
-    $vars['content'] .= theme('admin_links', $links);
-  }
+  $vars['content'] .= theme('admin_links', admin_get_links('node', $vars['node']));
 }
 
 /**

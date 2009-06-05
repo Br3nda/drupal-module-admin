@@ -33,5 +33,11 @@ function admin_preprocess_admin_toolbar(&$vars) {
  * Theme function for contextual popups.
  */
 function admin_preprocess_admin_links(&$vars) {
-  $vars['links'] = is_array($vars['links']) && !empty($vars['links']) ? implode("\n", $vars['links']) : '';
+  $links = '';
+  if (!empty($vars['links'])) {
+    foreach ($vars['links'] as $link) {
+      $links .= l($link['title'], $link['href'], $link);
+    }
+  }
+  $vars['links'] = $links;
 }
