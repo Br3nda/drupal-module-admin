@@ -34,7 +34,7 @@ function admin_preprocess_admin_toolbar(&$vars) {
  */
 function admin_preprocess_admin_links(&$vars) {
   $links = '';
-  if (!empty($vars['links'])) {
+  if (!empty($vars['links']) && is_array($vars['links'])) {
     foreach ($vars['links'] as $link) {
       $links .= l($link['title'], $link['href'], $link);
     }
