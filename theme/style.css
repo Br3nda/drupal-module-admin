@@ -694,6 +694,7 @@ form div.buttons {
     color:#999;
     }
 
+input.form-autocomplete,
 input.form-text,
 textarea.form-textarea,
 select.form-select {
