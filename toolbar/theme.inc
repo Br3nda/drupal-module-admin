@@ -4,22 +4,11 @@
  * Preprocessor for theme('admin_toolbar').
  */
 function admin_preprocess_admin_toolbar(&$vars) {
-  // Gather active paths -- we will check individual toolbars against
-  // these to see if any are active.
-  $active_paths = array();
-  $trail = menu_get_active_trail();
-  foreach ($trail as $item) {
-    if (!empty($item['href'])) {
-      $active_paths[] = $item['href'];
-    }
-  }
-
   $vars['collapsed'] = TRUE;
-
   foreach ($vars['tree'] as $depth => $menus) {
     foreach ($menus as $href => $links) {
       $class = ($depth > 0) ? 'collapsed' : '';
-      if ($depth > 0 && in_array($href, $active_paths)) {
+      if ($depth > 0 && admin_in_active_trail($href)) {
         $class = '';
         $vars['collapsed'] = FALSE;
       }

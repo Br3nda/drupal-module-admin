@@ -1,4 +1,5 @@
 <?php
+// $Id: admin.theme.inc,v 1.1.2.2 2009/06/07 07:03:52 yhahn Exp $
 
 /**
  * Initialize the admin "theme".
@@ -34,14 +35,8 @@ function _admin_init_theme() {
  * Generate the 1st level of navigation links under 'admin'.
  */
 function admin_navigation_primary() {
-  $tree = menu_tree_all_data();
-  foreach ($tree as $item) {
-    if ($item['link']['link_path'] == 'admin' && !empty($item['below'])) {
-      return admin_menu_navigation_links($item['below']);
-      break;
-    }
-  }
-  return NULL;
+  $tree = admin_get_menu_tree();
+  return admin_menu_navigation_links($tree);
 }
 
 /**
@@ -50,15 +45,10 @@ function admin_navigation_primary() {
 function admin_navigation_secondary() {
   $is_duplicated = theme('admin_block_content', NULL, TRUE);
   if (!$is_duplicated) {
-    $tree = menu_tree_page_data();
+    $tree = admin_get_menu_tree('page');
     foreach ($tree as $item) {
-      if ($item['link']['link_path'] == 'admin' && !empty($item['below'])) {
-        foreach ($item['below'] as $child) {
-          if (!empty($child['link']['in_active_trail']) && !empty($child['below'])) {
-            return admin_menu_navigation_links($child['below']);
-          }
-        }
-        break;
+      if (admin_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+        return admin_menu_navigation_links($item['below']);
       }
     }
   }

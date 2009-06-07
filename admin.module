@@ -1,4 +1,5 @@
 <?php
+// $Id: admin.module,v 1.1.2.5 2009/06/07 07:03:52 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -7,6 +8,14 @@ function admin_init() {
   $path = drupal_get_path('module', 'admin');
   drupal_add_js($path .'/toolbar/admin_toolbar.js');
   drupal_add_css($path .'/toolbar/admin_toolbar.css');
+
+  if (arg(0) == 'admin') {
+    // Set the active menu
+    menu_set_active_menu_name('admin');
+
+    // Conditionally include admin functions (form alters, etc.)
+    module_load_include('inc', 'admin', 'admin.admin');
+  }
 
   // Initialize the "null" theme -- in effect, bypass the theme system
   // entirely so we can load our own theme into place.
@@ -25,6 +34,13 @@ function admin_init() {
  * Implementation of hook_menu_alter().
  */
 function admin_menu_alter(&$items) {
+  // Move all admin/* items to admin menu links.
+  foreach ($items as $path => $item) {
+    if (strpos($path, 'admin') === 0) {
+      $items[$path]['menu_name'] = 'admin';
+    }
+  }
+
   // Move admin theme settings to theme local task.
   $items['admin/build/themes/admin'] = $items['admin/settings/admin'];
   $items['admin/build/themes/admin']['type'] = MENU_LOCAL_TASK;
@@ -133,39 +149,6 @@ function admin_menu_clone_items($search, $replace, $items) {
 }
 
 /**
- * Implementation of hook_form_alter() for system_admin_theme_settings.
- */
-function admin_form_system_admin_theme_settings_alter(&$form) {
-  // Add in our stealth theme as an option
-  $form['admin_theme']['#options']['admin'] = t('Admin');
-}
-
-/**
- * Implementation of hook_form_alter() for node_filter_form.
- */
-function admin_form_node_admin_content_alter(&$form) {
-  // If the admin theme has been inited, do some additional work.
-  global $theme;
-  if ($theme == 'admin') {
-    unset($form['admin']['options']['#type']);
-    unset($form['admin']['options']['#prefix']);
-    unset($form['admin']['options']['#suffix']);
-    $form['admin']['options']['#theme'] = 'admin_manage_options';
-  }
-}
-
-function admin_form_user_admin_account_alter(&$form) {
-  // If the admin theme has been inited, do some additional work.
-  global $theme;
-  if ($theme == 'admin') {
-    unset($form['options']['#type']);
-    unset($form['options']['#prefix']);
-    unset($form['options']['#suffix']);
-    $form['options']['#theme'] = 'admin_manage_options';
-  }
-}
-
-/**
  * Implementation of hook_system_info_alter().
  * Throw a flag that tells us we need to reinstantiate the admin theme.
  */
@@ -189,6 +172,9 @@ function admin_perm() {
  */
 function admin_theme($cache, $type, $theme, $path) {
   $items = array();
+  $items['admin_menu_overview_form'] = array(
+    'arguments' => array('form' => array()),
+  );
   $items['admin_toolbar'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'admin-toolbar',
@@ -396,32 +382,27 @@ function admin_preprocess_node(&$vars) {
 }
 
 /**
+ * Helper for returning a selectively flattened version of the admin menu.
+ */
+function admin_get_menu_tree($method = 'all', $reset = FALSE) {
+  $tree = ($method == 'all') ? menu_tree_all_data('admin', $item) : menu_tree_page_data('admin');
+  foreach ($tree as $k => $item) {
+    if ($item['link']['link_path'] == 'admin' && !empty($item['below'])) {
+      unset($tree[$k]);
+      $tree = array_merge($tree, $item['below']);
+    }
+  }
+  return $tree;
+}
+
+/**
  * Retrieve a hierarchy of links representing select portions of the
  * 'admin' branch of the navigation menu.
  */
 function admin_menu_tree() {
-  $parents = array();
-
-  $trail = menu_get_active_trail();
-  foreach ($trail as $item) {
-    if (!empty($item['mlid'])) {
-      $parents[] = $item['mlid'];
-    }
-  }
-
-  $tree = menu_tree_data(db_query("
-    SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
-    FROM {menu_links} ml LEFT JOIN {menu_router} m ON m.path = ml.router_path
-    WHERE ml.menu_name = '%s'
-      AND ml.link_path LIKE 'admin%'
-      AND ml.depth > 1
-      AND ml.depth < 4
-    ORDER BY p1 ASC, p2 ASC, p3 ASC, p4 ASC, p5 ASC, p6 ASC, p7 ASC, p8 ASC, p9 ASC", 'navigation'), $parents);
-  // @TODO: Cache here!
-
-  menu_tree_check_access($tree);
-
   $links = array();
+  // Retrieve the admin menu from the database.
+  $tree = admin_get_menu_tree();
   admin_menu_tree_links($tree, $links);
 
   // Add user-specific links
@@ -455,7 +436,7 @@ function admin_menu_navigation_links($tree, $admin_only = FALSE) {
       $l['html'] = TRUE;
 
       $class = ' path-'. $id;
-      if ($item['link']['in_active_trail']) {
+      if (admin_in_active_trail($item['link']['href'])) {
         $class .= ' active-trail';
       }
       // Keyed with the unique mlid to generate classes in theme_links().
@@ -485,6 +466,26 @@ function admin_menu_tree_links($tree, &$links, $parent = 'admin', $depth = 0) {
       }
     }
   }
+}
+
+/**
+ * Checks whether an item is in the active trail. Useful when using
+ * a menu generated by menu_tree_all_data() which does not set the
+ * 'in_active_trail' flag on items.
+ */
+function admin_in_active_trail($path, $reset = FALSE) {
+  // Gather active paths
+  static $active_paths;
+  if (!isset($active_paths) || $reset) {
+    $active_paths = array();
+    $trail = menu_get_active_trail();
+    foreach ($trail as $item) {
+      if (!empty($item['href'])) {
+        $active_paths[] = $item['href'];
+      }
+    }
+  }
+  return in_array($path, $active_paths);
 }
 
 /**
