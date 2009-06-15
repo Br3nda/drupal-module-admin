@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.8 2009/06/15 03:18:56 yhahn Exp $
+// $Id: admin.module,v 1.1.2.9 2009/06/15 03:39:30 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -18,8 +18,7 @@ function admin_init() {
   }
 
   // Initialize the slate theme. Bypass the theme system entirely so we can load our own theme into place.
-  $item = menu_get_item();
-  if (variable_get('node_admin_theme', 0) && in_array($item['page_callback'], array('node_add', 'node_add_page', 'node_page_edit'))) {
+  if (variable_get('node_admin_theme', 0) && (strpos($_GET['q'], 'node/add') === 0 || strpos($_GET['q'], 'admin/content/add') === 0 || (arg(0) == 'node' && arg(2) == 'edit'))) {
     _admin_init_theme();
   }
   else if (arg(0) == 'admin' && ($item['page_callback'] != 'block_admin_display') && variable_get('admin_theme', 'slate') == 'slate') {
