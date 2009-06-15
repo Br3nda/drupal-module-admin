@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.install,v 1.1.2.4 2009/06/15 04:36:27 yhahn Exp $
+// $Id: admin.install,v 1.1.2.5 2009/06/15 05:13:56 yhahn Exp $
 
 /**
  * Implementation of hook_install().
@@ -12,9 +12,7 @@ function admin_install() {
  * Implementation of hook_enable().
  */
 function admin_enable() {
-  $items = array('admin', 'admin/content', 'admin/build', 'admin/settings', 'admin/modules', 'admin/user', 'admin/reports');
-  $placeholders = db_placeholders($items, 'varchar');
-  $result = db_query("SELECT * FROM {menu_links} WHERE link_path IN ($placeholders)", $items);
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path LIKE 'admin%'", $items);
   while ($item = db_fetch_array($result)) {
     _menu_delete_item($item, TRUE);
   }
@@ -41,9 +39,7 @@ function admin_update_6002() {
     variable_set('admin_theme', 'slate');
   }
 
-  $items = array('admin', 'admin/content', 'admin/build', 'admin/settings', 'admin/modules', 'admin/user', 'admin/reports');
-  $placeholders = db_placeholders($items, 'varchar');
-  $result = db_query("SELECT * FROM {menu_links} WHERE link_path IN ($placeholders)", $items);
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path LIKE 'admin%'", $items);
   while ($item = db_fetch_array($result)) {
     _menu_delete_item($item, TRUE);
   }
