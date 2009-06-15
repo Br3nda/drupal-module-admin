@@ -1,6 +1,6 @@
-; $Id: admin.theme.info,v 1.1 2009/06/03 06:50:54 yhahn Exp $
-name = "Admin"
-description = "Stealth admin theme. Provided/managed by the admin module."
+; $Id: slate.info,v 1.1.2.1 2009/06/15 03:18:56 yhahn Exp $
+name = "Slate"
+description = "Slate theme. Provided/managed by the admin module."
 version = "0.1"
 core = "6.x"
 engine = "phptemplate"

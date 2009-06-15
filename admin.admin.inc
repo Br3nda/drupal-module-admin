@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.admin.inc,v 1.1.2.1 2009/06/07 07:03:52 yhahn Exp $
+// $Id: admin.admin.inc,v 1.1.2.2 2009/06/15 03:18:56 yhahn Exp $
 
 /**
  * Implementation of hook_form_alter() for menu_edit_item.
@@ -154,8 +154,8 @@ function admin_menu_overview_form_submit($form, &$form_state) {
  * Implementation of hook_form_alter() for system_admin_theme_settings.
  */
 function admin_form_system_admin_theme_settings_alter(&$form) {
-  // Add in our stealth theme as an option
-  $form['admin_theme']['#options']['admin'] = t('Admin');
+  // Add in our admin theme ('slate') as an option
+  $form['admin_theme']['#options']['slate'] = t('Slate (formerly \'Admin\')');
 }
 
 /**
