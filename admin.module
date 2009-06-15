@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.6 2009/06/08 00:52:46 yhahn Exp $
+// $Id: admin.module,v 1.1.2.7 2009/06/15 01:08:44 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -157,6 +157,18 @@ function admin_system_info_alter(&$info, &$theme) {
   if (!isset($once)) {
     $once = TRUE;
     variable_set('admin_theme_invalidated', TRUE);
+  }
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function admin_help($path, $arg) {
+  // Fool node help to think we are on node/add
+  if ($arg[0] == 'admin' && $arg[1] == 'content' && $arg[2] == 'add' && $arg[3]) {
+    $path = 'node/add/'. $arg[3];
+    $arg = array('node', 'add', $arg[3]);
+    return module_invoke('node', 'help', $path, $arg);
   }
 }
 
