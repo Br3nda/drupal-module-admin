@@ -1,11 +1,24 @@
 <?php
-// $Id: admin.install,v 1.1.2.3 2009/06/15 03:18:56 yhahn Exp $
+// $Id: admin.install,v 1.1.2.4 2009/06/15 04:36:27 yhahn Exp $
 
 /**
  * Implementation of hook_install().
  */
 function admin_install() {
   db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'admin', 'Admin', 'Admin links.');
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function admin_enable() {
+  $items = array('admin', 'admin/content', 'admin/build', 'admin/settings', 'admin/modules', 'admin/user', 'admin/reports');
+  $placeholders = db_placeholders($items, 'varchar');
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path IN ($placeholders)", $items);
+  while ($item = db_fetch_array($result)) {
+    _menu_delete_item($item, TRUE);
+  }
+  menu_rebuild();
 }
 
 /**
@@ -18,7 +31,7 @@ function admin_update_6001() {
 }
 
 /**
- * Update 6002: Update theme namespace to 'slate'.
+ * Update 6002: Update theme namespace to 'slate' & clears out any customizations to key admin menu items.
  */
 function admin_update_6002() {
   db_query("DELETE FROM {system} WHERE name = 'admin' AND type = 'theme'");
@@ -27,5 +40,14 @@ function admin_update_6002() {
   if (variable_get('admin_theme', NULL) == 'admin') {
     variable_set('admin_theme', 'slate');
   }
+
+  $items = array('admin', 'admin/content', 'admin/build', 'admin/settings', 'admin/modules', 'admin/user', 'admin/reports');
+  $placeholders = db_placeholders($items, 'varchar');
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path IN ($placeholders)", $items);
+  while ($item = db_fetch_array($result)) {
+    _menu_delete_item($item, TRUE);
+  }
+  menu_rebuild();
+
   return array();
 }
