@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.10 2009/06/18 23:27:00 yhahn Exp $
+// $Id: admin.module,v 1.1.2.11 2009/06/19 02:29:21 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -22,6 +22,9 @@ function admin_init() {
     _admin_init_theme();
   }
   else if (arg(0) == 'admin' && !in_array($_GET['q'], array('admin/build/block', 'admin/build/block/list')) && variable_get('admin_theme', 'slate') == 'slate') {
+    _admin_init_theme();
+  }
+  else if (function_exists('admin_theme_init') && $GLOBALS['custom_theme'] == 'slate') {
     _admin_init_theme();
   }
 }
