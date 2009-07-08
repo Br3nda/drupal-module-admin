@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.13 2009/07/08 15:52:57 yhahn Exp $
+// $Id: admin.module,v 1.1.2.14 2009/07/08 16:30:38 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -53,33 +53,14 @@ function admin_menu_alter(&$items) {
   $items['admin/build/themes/admin']['weight'] = 10;
   unset($items['admin/settings/admin']);
 
-  // Gather site settings under local tasks
-  $items['admin/settings/site'] =
-  $items['admin/settings/site/information'] =
-  $items['admin/settings/site-information'];
-  unset($items['admin/settings/site-information']);
+  // Add in a routing item for admin/content/add
+  $items['admin/content/add'] = $items['node/add'];
+  $items['admin/content/add']['page callback'] = 'drupal_goto';
+  $items['admin/content/add']['page arguments'] = array('node/add');
+  $items['admin/content/add']['description'] = 'Create new content on your site.';
+  $items['admin/content/add']['weight'] = -20;
+  $items['admin/content/node']['weight'] = -19;
 
-  $items['admin/settings/site']['title'] = 'Site settings';
-  $items['admin/settings/site/information']['title'] = 'Information';
-  $items['admin/settings/site/information']['type'] = MENU_DEFAULT_LOCAL_TASK;
-
-  $items['admin/settings/site/clean-urls'] = $items['admin/settings/clean-urls'];
-  $items['admin/settings/site/clean-urls']['type'] = MENU_LOCAL_TASK;
-  $items['admin/settings/site/clean-urls']['weight'] = 10;
-  unset($items['admin/settings/clean-urls']);
-
-  $items['admin/settings/site/error-reporting'] = $items['admin/settings/error-reporting'];
-  $items['admin/settings/site/error-reporting']['type'] = MENU_LOCAL_TASK;
-  $items['admin/settings/site/error-reporting']['weight'] = 10;
-  unset($items['admin/settings/error-reporting']);
-
-  $items['admin/settings/site/file-system'] = $items['admin/settings/file-system'];
-  $items['admin/settings/site/file-system']['type'] = MENU_LOCAL_TASK;
-  $items['admin/settings/site/file-system']['weight'] = 10;
-  unset($items['admin/settings/file-system']);
-
-  // Generate additional items for use in the menu
-  $items = array_merge($items, admin_menu_clone_items('node/add', 'admin/content/add', $items));
   $items = array_merge($items, admin_menu_clone_items('admin/build/themes', 'admin/themes', $items));
   $items = array_merge($items, admin_menu_clone_items('admin/build/modules', 'admin/modules', $items));
 
@@ -105,7 +86,7 @@ function admin_menu_alter(&$items) {
     'admin/settings/filters' => '',
     'admin/settings/language' => '',
     'admin/settings/performance' => '',
-    'admin/settings/site' => '',
+    'admin/settings/site-information' => '',
 
     'admin/themes' => 'Appearance',
     'admin/modules' => '',
@@ -117,11 +98,6 @@ function admin_menu_alter(&$items) {
       $items[$path]['options']['admin'] = TRUE;
     }
   }
-
-  // Apparently node/add has no description. Add one.
-  $items['admin/content/add']['description'] = 'Create new content on your site.';
-  $items['admin/content/add']['weight'] = -20;
-  $items['admin/content/node']['weight'] = -19;
 }
 
 /**
