@@ -71,6 +71,8 @@ hr { display:none; }
     list-style:none;
     }
 
+  #content ul.vertical-tabs-list { margin:-1px -100% -1px 0; }
+
 /**
  * Branding ===========================================================
  */
