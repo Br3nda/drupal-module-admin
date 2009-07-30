@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.21 2009/07/30 14:01:11 yhahn Exp $
+// $Id: admin.module,v 1.1.2.22 2009/07/30 14:10:30 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -101,8 +101,9 @@ function admin_landing_page_access($path) {
  */
 function admin_menu_alter(&$items) {
   foreach ($items as $path => $item) {
+    $args = explode('/', $path);
     // Move all admin/* items to admin menu links.
-    if (strpos($path, 'admin') === 0) {
+    if ($args && $args[0] === 'admin') {
       $items[$path]['menu_name'] = 'admin';
     }
     // Smarter access callback for poorly checked landing pages
