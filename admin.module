@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.20 2009/07/30 13:55:44 yhahn Exp $
+// $Id: admin.module,v 1.1.2.21 2009/07/30 14:01:11 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -21,12 +21,14 @@ function admin_init() {
     // Conditionally include admin functions (form alters, etc.)
     module_load_include('inc', 'admin', 'admin.admin');
   }
+  
+  $admin_theme = variable_get('admin_theme', 'slate');
 
   // Initialize the slate theme. Bypass the theme system entirely so we can load our own theme into place.
   if (variable_get('node_admin_theme', 0) && (strpos($_GET['q'], 'node/add') === 0 || strpos($_GET['q'], 'admin/content/add') === 0 || (arg(0) == 'node' && arg(2) == 'edit'))) {
     _admin_init_theme();
   }
-  else if (arg(0) == 'admin' && variable_get('admin_theme', 'slate') == 'slate') {
+  else if (arg(0) == 'admin' && ($admin_theme == 'slate' || empty($admin_theme))) {
     if (strpos($_GET['q'], 'admin/build/block') === 0) {
       if (in_array(arg(3), array('configure', 'delete', 'add'), TRUE)) {
         _admin_init_theme();
