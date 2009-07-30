@@ -1,4 +1,4 @@
-// $Id: admin_toolbar.js,v 1.1.2.2 2009/06/08 00:52:46 yhahn Exp $
+// $Id: admin_toolbar.js,v 1.1.2.3 2009/07/30 20:39:52 yhahn Exp $
 
 Drupal.admin = Drupal.admin || {};
 Drupal.admin.toolbar = Drupal.admin.toolbar || {};
@@ -29,6 +29,10 @@ Drupal.behaviors.admin_toolbar = function(context) {
         }
         // Add click handler
         $(this).click(function() {
+          if ($(this).is('.active')) {
+            window.location = $(this).attr('href');
+            return true;
+          }
           Drupal.admin.toolbar.setActive(target);
           return false;
         });
