@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.17 2009/07/22 06:13:41 yhahn Exp $
+// $Id: admin.module,v 1.1.2.18 2009/07/30 13:40:42 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -40,21 +40,53 @@ function admin_init() {
  * Menu access callback for admin landing pages.
  */
 function admin_landing_page_access($path) {
-  $item = db_fetch_array(db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = '%s' AND module = 'system'", $path));
-  $result = db_query("
-    SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
-    FROM {menu_links} ml
-    LEFT JOIN {menu_router} m ON ml.router_path = m.path
-    WHERE ml.plid = %d AND ml.menu_name = '%s' AND hidden = 0", $item['mlid'], $item['menu_name']);
-  $access = FALSE;
-  while ($item = db_fetch_array($result)) {
-    _menu_link_translate($item);
-    if ($item['access']) {
-      $access = TRUE;
-      break;
-    }
+  static $paths;
+  if (!isset($paths)) {
+    $cache = cache_get('admin_paths');
+    $paths = ($cache->data ? $cache->data : array());
   }
-  return $access;
+  if (!isset($paths[$path])) {
+    $item = db_fetch_array(db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = '%s' AND module = 'system'", $path));
+    $result = db_query("
+      SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
+      FROM {menu_links} ml
+      LEFT JOIN {menu_router} m ON ml.router_path = m.path
+      WHERE ml.plid = %d AND ml.menu_name = '%s' AND hidden = 0", $item['mlid'], $item['menu_name']);
+    $paths[$path] = FALSE;
+    while ($item = db_fetch_array($result)) {
+      $item['options'] = unserialize($item['options']);
+      if ($item['external']) {
+        if (!empty($item['options']['alter'])) {
+          drupal_alter('translated_menu_link', $item, $map);
+        }
+        if ($item['access']) {
+          $paths[$path] = TRUE;
+          break;
+        }
+      }
+      else {
+        $map = explode('/', $item['link_path']);
+        _menu_link_map_translate($map, $item['to_arg_functions']);
+        $item['href'] = implode('/', $map);
+        if (strpos($item['href'], '%') !== FALSE) {
+          continue;
+        }
+        if (!isset($item['access'])) {
+          if (!_menu_load_objects($item, $map)) {
+            continue;
+          }
+          _menu_check_access($item, $map);
+        }
+        if (!$item['access']) {
+          continue;
+        }
+        $paths[$path] = TRUE;
+        break;
+      }
+    }
+    cache_set('admin_paths', $paths);
+  }
+  return $paths[$path];
 }
 
 /**
@@ -124,6 +156,7 @@ function admin_menu_alter(&$items) {
       $items[$path]['options']['admin'] = TRUE;
     }
   }
+  cache_clear_all('admin_paths', 'cache');
 }
 
 /**
@@ -533,7 +566,8 @@ function admin_in_active_trail($path, $reset = FALSE) {
  * Rebuild the admin theme entry in the database.
  */
 function _admin_theme_rebuild($force = FALSE) {
-  if (arg(0) == 'admin') {
+  static $exists;
+  if (!isset($exists) && arg(0) == 'admin') {
     $exists = db_result(db_query("SELECT count(*) FROM {system} WHERE name = 'slate' AND type = 'theme'"));
     $force = !$exists ? TRUE : $force;
   }
