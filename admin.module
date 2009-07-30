@@ -1,10 +1,15 @@
 <?php
-// $Id: admin.module,v 1.1.2.18 2009/07/30 13:40:42 yhahn Exp $
+// $Id: admin.module,v 1.1.2.19 2009/07/30 13:49:03 yhahn Exp $
 
 /**
  * Implementation of hook_init().
  */
 function admin_init() {
+  // Don't do anything if the user has no access.
+  if (!user_access('admin menu') && !user_access('admin inline')) {
+    return;
+  }
+
   $path = drupal_get_path('module', 'admin');
   drupal_add_js($path .'/toolbar/admin_toolbar.js');
   drupal_add_css($path .'/toolbar/admin_toolbar.css');
