@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.22 2009/07/30 14:10:30 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23 2009/07/30 14:41:34 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -107,7 +107,7 @@ function admin_menu_alter(&$items) {
       $items[$path]['menu_name'] = 'admin';
     }
     // Smarter access callback for poorly checked landing pages
-    if (!empty($item['access arguments']) && $item['access arguments'] === array('access administration pages') && in_array($item['page callback'], array('system_admin_menu_block_page', 'system_settings_overview'))) {
+    if (!empty($item['access arguments']) && !empty($item['page callback']) && $item['access arguments'] === array('access administration pages') && in_array($item['page callback'], array('system_admin_menu_block_page', 'system_settings_overview'))) {
       $items[$path]['access callback'] = 'admin_landing_page_access';
       $items[$path]['access arguments'] = array($path);
     }
