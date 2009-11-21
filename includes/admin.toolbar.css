@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.css,v 1.1.2.3 2009/11/21 22:08:43 yhahn Exp $ */
+/* $Id: admin.toolbar.css,v 1.1.2.4 2009/11/21 22:40:45 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets
@@ -341,7 +341,7 @@ div#admin-toolbar.horizontal div.block-content {
   }
 
 /* Vertical block content positioning */
-body.admin-vertical div#admin-toolbar.expanded div.admin-block { position:absolute; bottom:0px; left:0px; right:0px; }
+body.admin-expanded div#admin-toolbar.vertical div.admin-block { position:absolute; bottom:0px; left:0px; right:0px; }
 div#admin-toolbar.vertical div.admin-blocks-1 div.admin-block { top:30px; }
 div#admin-toolbar.vertical div.admin-blocks-2 div.admin-block { top:60px; }
 div#admin-toolbar.vertical div.admin-blocks-3 div.admin-block { top:90px; }
