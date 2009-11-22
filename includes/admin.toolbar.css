@@ -1,7 +1,7 @@
-/* $Id: admin.toolbar.css,v 1.1.2.5 2009/11/22 16:38:04 yhahn Exp $ */
+/* $Id: admin.toolbar.css,v 1.1.2.6 2009/11/22 17:08:31 yhahn Exp $ */
 
 /**
- * Admin toolbar CSS resets
+ * Admin toolbar CSS resets ===========================================
  */
 /* Text */
 #admin-toolbar,
@@ -130,7 +130,7 @@
   }
 
 /**
- * Base styles
+ * Base styles ========================================================
  */
 div#admin-toolbar,
 div#admin-toolbar * { font:normal 11px/15px "Lucida Grande",Tahoma,Verdana,sans-serif; }
@@ -148,7 +148,7 @@ div#admin-toolbar a {
   }
 
 /**
- * Toggling.
+ * Toggling ===========================================================
  */
 div#admin-toolbar div.admin-blocks {
   background:url(../images/black.png) 0px 35px repeat-x;
@@ -157,26 +157,6 @@ div#admin-toolbar div.admin-blocks {
   }
 
   body.admin-expanded div#admin-toolbar div.admin-blocks { display:block; }
-
-  div#admin-toolbar.vertical {
-    position:fixed;
-    bottom:0px;
-    top:0px;
-    }
-
-    div#admin-toolbar.vertical div.admin-blocks { width:260px; }
-    div#admin-toolbar.vertical div.admin-block  { width:240px; }
-    div#admin-toolbar.vertical div.admin-tabs   { width:215px; }
-
-  body.admin-expanded.admin-vertical.admin-ne,
-  body.admin-expanded.admin-vertical.admin-se { padding-right:260px; }
-
-  body.admin-expanded.admin-vertical.admin-nw,
-  body.admin-expanded.admin-vertical.admin-sw { padding-left:260px; }
-
-  body.admin-expanded div#admin-toolbar.vertical { background:#000; }
-
-  div#admin-toolbar.horizontal { left:0px; right:0px; }
 
   div#admin-toolbar.ne,
   div#admin-toolbar.nw { top:0px; }
@@ -194,6 +174,42 @@ div#admin-toolbar div.admin-blocks {
   div#admin-toolbar.ne span.admin-toggle,
   div#admin-toolbar.se span.admin-toggle { right:0px; }
 
+  /**
+   * Vertical =========================================================
+   */
+  div#admin-toolbar.vertical {
+    position:fixed;
+    bottom:0px;
+    top:0px;
+    }
+
+    div#admin-toolbar.vertical div.admin-blocks { background-color:#000; }
+    div#admin-toolbar.vertical div.admin-blocks { width:260px; }
+    div#admin-toolbar.vertical div.admin-block  { width:240px; }
+    div#admin-toolbar.vertical div.admin-tabs   { width:215px; }
+
+  body.admin-expanded div#admin-toolbar.vertical div.admin-blocks { position:absolute; top:0px; bottom:0px; }
+
+    body.admin-expanded div#admin-toolbar.vertical.ne div.admin-blocks,
+    body.admin-expanded div#admin-toolbar.vertical.se div.admin-blocks { right:0px; }
+
+    body.admin-expanded div#admin-toolbar.vertical.nw div.admin-blocks,
+    body.admin-expanded div#admin-toolbar.vertical.sw div.admin-blocks { left:0px; }
+
+  body.admin-expanded.admin-vertical.admin-ne,
+  body.admin-expanded.admin-vertical.admin-se { margin-right:260px; }
+
+  body.admin-expanded.admin-vertical.admin-nw,
+  body.admin-expanded.admin-vertical.admin-sw { margin-left:260px; }
+
+  /**
+   * Horizontal =======================================================
+   */
+  div#admin-toolbar.horizontal { left:0px; right:0px; }
+
+/**
+ * Toggler ============================================================
+ */
 div#admin-toolbar span.admin-toggle {
   display:block;
   width:35px;
@@ -228,7 +244,7 @@ div#admin-toolbar span.admin-toggle {
     }
 
 /**
- * Admin tabs
+ * Admin tabs =========================================================
  */
 div#admin-toolbar div.admin-tabs { background:#222 url(../images/bleeds.png) 0px 100% repeat-x; }
 
@@ -320,43 +336,47 @@ div#admin-toolbar div.admin-tab-active {
     }
 
 /**
- * Admin blocks
+ * Admin blocks =======================================================
  */
 div#admin-toolbar div.admin-blocks div.admin-block {
   padding:10px;
   display:none;
   }
 
-div#admin-toolbar div.admin-blocks div.admin-active { display:block; }
+  div#admin-toolbar div.admin-blocks div.admin-active { display:block; }
 
-/* Horizontal */
-div#admin-toolbar.horizontal div.block-content {
-  position:relative;
-  max-width:960px;
-  min-height:75px;
-  }
+  /**
+   * Horizontal =======================================================
+   */
+  div#admin-toolbar.horizontal div.block-content {
+    position:relative;
+    max-width:960px;
+    min-height:75px;
+    }
 
-/* Vertical block content positioning */
-body.admin-expanded div#admin-toolbar.vertical div.admin-block { position:absolute; bottom:0px; left:0px; right:0px; }
-div#admin-toolbar.vertical div.admin-blocks-1 div.admin-block { top:30px; }
-div#admin-toolbar.vertical div.admin-blocks-2 div.admin-block { top:60px; }
-div#admin-toolbar.vertical div.admin-blocks-3 div.admin-block { top:90px; }
-div#admin-toolbar.vertical div.admin-blocks-4 div.admin-block { top:120px; }
-div#admin-toolbar.vertical div.admin-blocks-5 div.admin-block { top:150px; }
-div#admin-toolbar.vertical div.admin-blocks-6 div.admin-block { top:180px; }
-div#admin-toolbar.vertical div.admin-blocks-7 div.admin-block { top:210px; }
-div#admin-toolbar.vertical div.admin-blocks-8 div.admin-block { top:240px; }
-div#admin-toolbar.vertical div.admin-blocks-9 div.admin-block { top:270px; }
-div#admin-toolbar.vertical div.admin-blocks-10 div.admin-block { top:300px; }
+  /**
+   * Vertical =========================================================
+   */
+  body.admin-expanded div#admin-toolbar.vertical div.admin-block { position:absolute; bottom:0px; left:0px; right:0px; }
+  div#admin-toolbar.vertical div.admin-blocks-1 div.admin-block { top:30px; }
+  div#admin-toolbar.vertical div.admin-blocks-2 div.admin-block { top:60px; }
+  div#admin-toolbar.vertical div.admin-blocks-3 div.admin-block { top:90px; }
+  div#admin-toolbar.vertical div.admin-blocks-4 div.admin-block { top:120px; }
+  div#admin-toolbar.vertical div.admin-blocks-5 div.admin-block { top:150px; }
+  div#admin-toolbar.vertical div.admin-blocks-6 div.admin-block { top:180px; }
+  div#admin-toolbar.vertical div.admin-blocks-7 div.admin-block { top:210px; }
+  div#admin-toolbar.vertical div.admin-blocks-8 div.admin-block { top:240px; }
+  div#admin-toolbar.vertical div.admin-blocks-9 div.admin-block { top:270px; }
+  div#admin-toolbar.vertical div.admin-blocks-10 div.admin-block { top:300px; }
 
-div#admin-toolbar.vertical div.block-content {
-  overflow-x:hidden;
-  overflow-y:auto;
-  height:100%;
-  }
+  div#admin-toolbar.vertical div.block-content {
+    overflow-x:hidden;
+    overflow-y:auto;
+    height:100%;
+    }
 
 /**
- * Lists
+ * Lists ==============================================================
  */
 #admin-toolbar div.item-list li {
   padding:5px 0px 4px;
@@ -386,7 +406,7 @@ div#admin-toolbar.vertical div.block-content {
   }
 
 /**
- * Form elements
+ * Form elements ======================================================
  */
 #admin-toolbar input.form-autocomplete,
 #admin-toolbar input.form-text,
@@ -485,7 +505,7 @@ div#admin-toolbar.vertical div.block-content {
   #admin-toolbar.vertical div.form-item div.description { font-size:10px; }
 
 /**
- * Admin panes.
+ * Admin panes ========================================================
  */
 #admin-toolbar div.admin-panes div.admin-pane:hover,
 #admin-toolbar div.admin-panes div.admin-pane-active,
