@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.css,v 1.1.2.4 2009/11/21 22:40:45 yhahn Exp $ */
+/* $Id: admin.toolbar.css,v 1.1.2.5 2009/11/22 16:38:04 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets
@@ -226,10 +226,6 @@ div#admin-toolbar span.admin-toggle {
     top:0px;
     background-position:0px -35px;
     }
-
-/* Static positioned toolbar. Only applies if toolbar is at the top of the page. */
-body.admin-static div#admin-toolbar.horizontal.ne,
-body.admin-static div#admin-toolbar.horizontal.nw { position:relative; }
 
 /**
  * Admin tabs
