@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.1 2009/11/20 02:44:31 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.2 2009/11/22 16:36:34 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -292,12 +292,22 @@ function admin_preprocess_pre_page(&$vars) {
  * Implementation of hook_preprocess_page().
  */
 function admin_preprocess_page(&$vars) {
-  $blocks = admin_get_admin_blocks();
-  if ($blocks) {
+  if ($blocks = admin_get_admin_blocks()) {
     $position = admin_get_settings('position');
     $layout = admin_get_settings('layout');
     $class = admin_get_settings('expanded') ? 'admin-expanded' : '';
-    $vars['admin'] = theme('admin_toolbar', $blocks, $position, $layout);
     $vars['body_classes'] .= " admin-{$position} admin-{$layout} {$class}";
+  }
+}
+
+/**
+ * Implementation of hook_footer().
+ */
+function admin_footer() {
+  if ($blocks = admin_get_admin_blocks()) {
+    $position = admin_get_settings('position');
+    $layout = admin_get_settings('layout');
+    $class = admin_get_settings('expanded') ? 'admin-expanded' : '';
+    return theme('admin_toolbar', $blocks, $position, $layout);
   }
 }
