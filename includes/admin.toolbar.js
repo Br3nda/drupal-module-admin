@@ -1,4 +1,4 @@
-// $Id: admin.toolbar.js,v 1.1.2.1 2009/11/20 02:44:32 yhahn Exp $
+// $Id: admin.toolbar.js,v 1.1.2.2 2009/11/24 15:21:35 yhahn Exp $
 
 Drupal.behaviors.adminToolbar = function(context) {
   $('#admin-toolbar:not(.processed)').each(function() {
@@ -101,7 +101,7 @@ Drupal.adminToolbar.tab = function(toolbar, tab, animate) {
 Drupal.adminToolbar.toggle = function (toolbar) {
   if ($(document.body).is('.admin-expanded')) {
     if ($(toolbar).is('.vertical')) {
-      $('div.admin-blocks', toolbar).animate({width:'0px'}, 'fast', function() { $(document.body).toggleClass('admin-expanded'); });
+      $('div.admin-blocks', toolbar).animate({width:'0px'}, 'fast', function() { $(this).css('display', 'none'); $(document.body).toggleClass('admin-expanded'); });
     }
     else {
       $('div.admin-blocks', toolbar).slideUp('fast', function() { $(document.body).toggleClass('admin-expanded'); });
