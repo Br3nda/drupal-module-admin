@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.2 2009/11/22 16:36:34 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.3 2009/12/02 02:50:27 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -124,6 +124,9 @@ function admin_menu_alter(&$items) {
 
 /**
  * Menu access callback for admin landing pages.
+ *
+ * For a given landing page, grant access if the current user has access
+ * to any of its child menu items.
  */
 function admin_landing_page_access($path) {
   static $paths;
@@ -132,7 +135,7 @@ function admin_landing_page_access($path) {
     $result = db_query("
       SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
       FROM {menu_links} ml
-      LEFT JOIN {menu_router} m ON ml.router_path = m.path
+      LEFT JOIN {menu_router} m ON ml.link_path = m.path
       WHERE ml.plid = %d AND ml.menu_name = '%s' AND hidden = 0", $item['mlid'], $item['menu_name']);
     $paths[$path] = FALSE;
     while ($item = db_fetch_array($result)) {
