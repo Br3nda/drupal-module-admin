@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.3 2009/12/02 02:50:27 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.4 2009/12/04 22:20:03 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -13,6 +13,7 @@ function admin_init() {
     drupal_add_js("{$path}/includes/jquery.cookie.js");
     drupal_add_js("{$path}/includes/admin.toolbar.js");
     drupal_add_js("{$path}/includes/admin.menu.js");
+    drupal_add_css("{$path}/includes/admin.toolbar.base.css");
     drupal_add_css("{$path}/includes/admin.toolbar.css");
     drupal_add_css("{$path}/includes/admin.menu.css");
     if ($trail = menu_get_active_trail()) {
