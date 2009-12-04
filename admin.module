@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.4 2009/12/04 22:20:03 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.5 2009/12/04 23:07:38 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -17,9 +17,9 @@ function admin_init() {
     drupal_add_css("{$path}/includes/admin.toolbar.css");
     drupal_add_css("{$path}/includes/admin.menu.css");
     if ($trail = menu_get_active_trail()) {
-      while (count($trail) && !($last['type'] & MENU_VISIBLE_IN_TREE)) {
+      do {
         $last = array_pop($trail);
-      }
+      } while (count($trail) && !($last['type'] & MENU_VISIBLE_IN_TREE));
       if ($last) {
         drupal_add_js(array('activePath' => url($last['href'])), 'setting');
       }
@@ -267,10 +267,13 @@ function admin_set_admin_blocks($reset = FALSE) {
     $blocks = array();
     if (user_access('use admin toolbar') && $bids = admin_get_settings('blocks')) {
       foreach ($bids as $bid) {
-        list($module, $delta) = explode('-', $bid, 2);
-        $block = module_invoke($module, 'block', 'view', $delta);
-        if (!empty($block['content'])) {
-          $blocks["{$module}-{$delta}"] = $block;
+        $split = explode('-', $bid, 2);
+        if (count($split) === 2) {
+          list($module, $delta) = $split;
+          $block = module_invoke($module, 'block', 'view', $delta);
+          if (!empty($block['content'])) {
+            $blocks["{$module}-{$delta}"] = $block;
+          }
         }
       }
     }

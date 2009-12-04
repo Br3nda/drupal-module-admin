@@ -15,7 +15,7 @@ function template_preprocess_admin_toolbar(&$vars) {
         'attributes' => array('id' => 'admin-tab-'. $bid),
       );
       if ($bid == $active) {
-        $vars['blocks'][$bid]['class'] .= ' admin-active';
+        $vars['blocks'][$bid]['class'] = 'admin-active';
         $vars['tabs'][$bid]['active'] = TRUE;
       }
     }
@@ -76,11 +76,12 @@ function theme_admin_menu_tree_output($tree) {
       $extra_class = 'last';
     }
     $link = theme('admin_menu_item_link', $data['link']);
+    $in_active_trail = isset($data['link']['in_active_trail']) ? $data['link']['in_active_trail'] : FALSE;
     if ($data['below']) {
-      $output .= theme('menu_item', $link, $data['link']['has_children'], theme('admin_menu_tree_output', $data['below']), $data['link']['in_active_trail'], $extra_class);
+      $output .= theme('menu_item', $link, $data['link']['has_children'], theme('admin_menu_tree_output', $data['below']), $in_active_trail, $extra_class);
     }
     else {
-      $output .= theme('menu_item', $link, $data['link']['has_children'], '', $data['link']['in_active_trail'], $extra_class);
+      $output .= theme('menu_item', $link, $data['link']['has_children'], '', $in_active_trail, $extra_class);
     }
   }
   return $output ? theme('menu_tree', $output) : '';
