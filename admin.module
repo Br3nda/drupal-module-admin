@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.5 2009/12/04 23:07:38 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.6 2009/12/09 20:50:48 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -110,6 +110,7 @@ function admin_menu_alter(&$items) {
   $items['admin/settings/admin/settings']['type'] = MENU_DEFAULT_LOCAL_TASK;
 
   foreach ($items as $path => $item) {
+    $item['type'] = isset($item['type']) ? $item['type'] : MENU_NORMAL_ITEM;
     // Move all admin/* items to admin menu links except local tasks, callbacks.
     $args = explode('/', $path);
     if ($path === 'admin' || (($item['type'] & MENU_NORMAL_ITEM) && $args && $args[0] === 'admin')) {
