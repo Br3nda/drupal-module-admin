@@ -71,13 +71,13 @@ div#admin-toolbar.horizontal span.menu-description {
   }
 
 #admin-toolbar.horizontal ul.admin-active-menu li {
-  cursor:pointer;
   float:left;
   width:50%;
   }
 
   #admin-toolbar ul.admin-active-menu li { background:url(../images/sprite.png) 0% -85px no-repeat; }
   #admin-toolbar ul.admin-active-menu li.leaf { background-position:0% -110px; }
+  #admin-toolbar ul.admin-active-menu li.expanded { cursor:pointer; }
 
 #admin-toolbar ul.menu li a {
   -moz-border-radius:5px;
