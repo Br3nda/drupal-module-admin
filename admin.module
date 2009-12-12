@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.6 2009/12/09 20:50:48 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.7 2009/12/12 00:34:09 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -193,6 +193,11 @@ function admin_theme($cache, $type, $theme, $path) {
     'template' => 'admin-panes',
     'path' => $path . '/theme',
     'file' => 'theme.inc',
+  );
+  $items['admin_settings_form'] = array(
+    'arguments' => array('element' => array()),
+    'path' => $path,
+    'file' => 'admin.admin.inc',
   );
   return $items;
 }

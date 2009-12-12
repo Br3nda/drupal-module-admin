@@ -1,11 +1,14 @@
 <?php
-// $Id: admin.admin.inc,v 1.1.2.3.2.1 2009/11/20 02:44:31 yhahn Exp $
+// $Id: admin.admin.inc,v 1.1.2.3.2.2 2009/12/12 00:34:09 yhahn Exp $
 
 /**
  * System settings form for admin toolbar.
  */
 function admin_settings_form() {  
-  $form['admin_toolbar'] = array('#tree' => TRUE);
+  $form['admin_toolbar'] = array(
+    '#tree' => TRUE,
+    '#theme' => 'admin_settings_form'
+  );
   $form['admin_toolbar']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Layout'),
@@ -29,21 +32,99 @@ function admin_settings_form() {
     '#default_value' => admin_get_settings('position'),
   );
 
-  // Get options.
-  $options = array();
-  foreach (admin_get_default_blocks() as $bid) {
-    list($module, $delta) = explode('-', $bid, 2);
-    $info = module_invoke($module, 'block', 'list');
-    if (isset($info[$delta]['info'])) {
-      $options[$bid] = $info[$delta]['info'];
+  $block_info = array();
+  foreach (module_implements('block') as $module) {
+    $module_blocks = module_invoke($module, 'block', 'list');
+    if ($module_blocks) {
+      foreach ($module_blocks as $delta => $info) {
+        $block_info["{$module}-{$delta}"] = $info;
+      }
     }
   }
+
+  // Get default block options.
+  $options = array();
+  $enabled = array_filter(admin_get_settings('blocks')) + admin_get_default_blocks();
+  foreach (array_intersect_key($block_info, $enabled) as $bid => $info) {
+    $options[$bid] = $info['info'];
+  }
+  asort($options);
+
   $form['admin_toolbar']['blocks'] = array(
     '#type' => 'checkboxes',
-    '#title' => t('Enabled blocks'),
-    '#description' => t('Choose blocks to enable in the admin toolbar.'),
     '#options' => $options,
     '#default_value' => admin_get_settings('blocks'),
   );
+
+  // Grab an array of human-readable module names. It hurts that we need to do this.
+  $result = db_query("SELECT name,type,info FROM {system} WHERE type = 'module' AND status = 1");
+  $modules = array();
+  while ($row = db_fetch_object($result)) {
+    $info = unserialize($row->info);
+    $modules[$row->name] = isset($info['name']) ? $info['name'] : $row->name;
+  }
+  foreach (array_diff_key($block_info, $options) as $bid => $info) {
+    $module = array_shift(explode('-', $bid));
+    $module = isset($modules[$module]) ? $modules[$module] : $module;
+    $custom_options[$module][$bid] = $info['info'];
+  }
+  $custom_options = $custom_options + array(-1 => '<'. t('Choose a block') .'>');
+  ksort($custom_options);
+  $form['admin_toolbar']['custom'] = array(
+    '#type' => 'select',
+    '#options' => $custom_options,
+    '#default_value' => -1,
+    '#element_validate' => array('admin_settings_form_custom_validate'),
+    '#description' => t('Enable other blocks for use in the admin toolbar.'),
+  );
+  $form['admin_toolbar']['add'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add block'),
+  );
+
   return system_settings_form($form);
+}
+
+/**
+ * Element validator for custom block adder. Moves values within
+ * $form_state['values'] and prevents additional variables from being saved.
+ */
+function admin_settings_form_custom_validate($element, &$form_state) {
+  if ($form_state['values']['admin_toolbar']['custom'] != -1) {
+    $bid = $form_state['values']['admin_toolbar']['custom'];
+    $form_state['values']['admin_toolbar']['blocks'][$bid] = $bid;
+  }
+  unset($form_state['values']['admin_toolbar']['custom']);
+  unset($form_state['values']['admin_toolbar']['add']);
+}
+
+/**
+ * Theme function for the admin settings form.
+ */
+function theme_admin_settings_form($form) {
+  $rows = array();
+
+  // Admin blocks
+  $header = array(array('data' => t('Administrative blocks'), 'colspan' => 2));
+  foreach (admin_get_default_blocks() as $block) {
+    $rows[] = array(array(
+        'data' => drupal_render($form['blocks'][$block]),
+        'colspan' => 2
+    ));
+  }
+
+  // "Custom" blocks
+  $custom = array_diff(element_children($form['blocks']), admin_get_default_blocks());
+  $rows[] = array(array('data' => t('Other blocks'), 'colspan' => 2, 'header' => TRUE));
+  if (!empty($custom)) {
+    foreach ($custom as $block) {
+      $rows[] = array(array(
+        'data' => drupal_render($form['blocks'][$block]),
+        'colspan' => 2
+      ));
+    }
+  }
+  $rows[] = array(drupal_render($form['custom']), drupal_render($form['add']));
+  $form['blocks']['#children'] = theme('table', $header, $rows);
+  return drupal_render($form);
 }
