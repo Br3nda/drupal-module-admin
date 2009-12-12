@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.base.css,v 1.1.2.1 2009/12/04 22:20:03 yhahn Exp $ */
+/* $Id: admin.toolbar.base.css,v 1.1.2.2 2009/12/12 00:54:06 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets ===========================================
@@ -255,10 +255,6 @@ div#admin-toolbar div.admin-tab a {
 
 div#admin-toolbar div.admin-tab {
   cursor:pointer;
-
-  overflow:hidden;
-  white-space:nowrap;
-
   padding:4px 19px;
   height:15px;
   border-width:1px;
@@ -266,6 +262,9 @@ div#admin-toolbar div.admin-tab {
   }
 
   div#admin-toolbar.vertical div.admin-tab {
+    overflow:hidden;
+    white-space:nowrap;
+
     margin-bottom:5px;
     padding-left:9px;
     padding-right:9px;
