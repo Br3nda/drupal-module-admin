@@ -31,13 +31,16 @@ function template_preprocess_admin_panes(&$vars) {
   $vars['labels'] = $vars['panels'] = $vars['others'] = array();
   $first = TRUE;
   foreach (element_children($vars['element']) as $key) {
-    if (!empty($vars['element'][$key]['#title'])) {
-      $vars['labels'][$key] = l($vars['element'][$key]['#title'], $_GET['q'], array('fragment' => 'admin-pane-'. $key, 'attributes' => array('class' => $first ? 'admin-pane-active' : '')));
-      $vars['panels'][$key] = isset($vars['element'][$key]['#children']) ? $vars['element'][$key]['#children'] : $vars['element'][$key]['#value'];
-      $first = FALSE;
-    }
-    else {
-      $vars['others'][] = $vars['element'][$key];
+    if (!isset($vars['element'][$key]['#access']) || $vars['element'][$key]['#access']) {
+      if (!empty($vars['element'][$key]['#title'])) {
+        $vars['labels'][$key] = l($vars['element'][$key]['#title'], $_GET['q'], array('fragment' => 'admin-pane-'. $key, 'attributes' => array('class' => $first ? 'admin-pane-active' : '')));
+        $vars['panels'][$key] = isset($vars['element'][$key]['#children']) ? $vars['element'][$key]['#children'] : $vars['element'][$key]['#value'];
+        $vars['panels'][$key] .= isset($vars['element'][$key]['#description']) ? "<div class='description'>". filter_xss_admin($vars['element'][$key]['#description']) ."</div>" : '';
+        $first = FALSE;
+      }
+      else {
+        $vars['others'][] = $vars['element'][$key];
+      }
     }
   }
 }
