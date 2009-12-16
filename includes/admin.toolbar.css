@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.css,v 1.1.2.7 2009/12/04 22:20:03 yhahn Exp $ */
+/* $Id: admin.toolbar.css,v 1.1.2.8 2009/12/16 06:16:04 yhahn Exp $ */
 
 /**
  * Base styles ========================================================
@@ -153,6 +153,7 @@ div#admin-toolbar div.admin-tab-active {
 
 #admin-toolbar div.form-item { padding:4px; }
 
+#admin-toolbar div.form-item div.description,
 #admin-toolbar div.form-item label { color:#999; }
 
 /**

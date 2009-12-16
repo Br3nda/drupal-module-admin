@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.base.css,v 1.1.2.2 2009/12/12 00:54:06 yhahn Exp $ */
+/* $Id: admin.toolbar.base.css,v 1.1.2.3 2009/12/16 06:16:04 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets ===========================================
@@ -86,6 +86,7 @@
 #admin-toolbar .ok,
 #admin-toolbar div.ok,
 #admin-toolbar tr.ok,
+#admin-toolbar .item-list,
 #admin-toolbar .item-list .icon,
 #admin-toolbar .item-list .title,
 #admin-toolbar .item-list ul,
@@ -419,6 +420,7 @@ div#admin-toolbar div.admin-blocks div.admin-block {
     -moz-border-radius:0px;
     -webkit-border-radius:0px;
     padding:5px 0px;
+    margin:0px;
     background:transparent;
     }
 
