@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.7 2009/12/12 00:34:09 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.8 2010/01/05 04:20:08 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -250,15 +250,25 @@ function admin_get_settings($key = NULL) {
  * Get all blocks that have declared themselves visible in the admin toolbar by default.
  */
 function admin_get_default_blocks($reset = FALSE) {
-  $defaults = array();
-  foreach (module_implements('block') as $module) {
-    $module_blocks = module_invoke($module, 'block', 'list');
-    if ($module_blocks) {
-      foreach ($module_blocks as $delta => $info) {
-        if (isset($info['admin'])) {
-          $defaults["{$module}-{$delta}"] = "{$module}-{$delta}";
+  static $defaults;
+  if (!isset($defaults) || $reset) {
+    $cache = cache_get('admin_default_blocks');
+    if ($cache && !$reset) {
+      $defaults = $cache->data;
+    }
+    else {
+      $defaults = array();
+      foreach (module_implements('block') as $module) {
+        $module_blocks = module_invoke($module, 'block', 'list');
+        if ($module_blocks) {
+          foreach ($module_blocks as $delta => $info) {
+            if (isset($info['admin'])) {
+              $defaults["{$module}-{$delta}"] = "{$module}-{$delta}";
+            }
+          }
         }
       }
+      cache_set('admin_default_blocks', $defaults);
     }
   }
   return $defaults;

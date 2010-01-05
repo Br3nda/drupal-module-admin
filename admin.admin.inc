@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.admin.inc,v 1.1.2.3.2.2 2009/12/12 00:34:09 yhahn Exp $
+// $Id: admin.admin.inc,v 1.1.2.3.2.3 2010/01/05 04:20:08 yhahn Exp $
 
 /**
  * System settings form for admin toolbar.
@@ -44,7 +44,7 @@ function admin_settings_form() {
 
   // Get default block options.
   $options = array();
-  $enabled = array_filter(admin_get_settings('blocks')) + admin_get_default_blocks();
+  $enabled = array_filter(admin_get_settings('blocks')) + admin_get_default_blocks(TRUE);
   foreach (array_intersect_key($block_info, $enabled) as $bid => $info) {
     $options[$bid] = $info['info'];
   }
@@ -106,7 +106,8 @@ function theme_admin_settings_form($form) {
 
   // Admin blocks
   $header = array(array('data' => t('Administrative blocks'), 'colspan' => 2));
-  foreach (admin_get_default_blocks() as $block) {
+  $default_blocks = admin_get_default_blocks(TRUE);
+  foreach ($default_blocks as $block) {
     $rows[] = array(array(
         'data' => drupal_render($form['blocks'][$block]),
         'colspan' => 2
@@ -114,7 +115,7 @@ function theme_admin_settings_form($form) {
   }
 
   // "Custom" blocks
-  $custom = array_diff(element_children($form['blocks']), admin_get_default_blocks());
+  $custom = array_diff(element_children($form['blocks']), $default_blocks);
   $rows[] = array(array('data' => t('Other blocks'), 'colspan' => 2, 'header' => TRUE));
   if (!empty($custom)) {
     foreach ($custom as $block) {
