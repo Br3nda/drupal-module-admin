@@ -21,7 +21,10 @@ div#admin-toolbar div.admin-tab.admin-menu a {
 /**
  * Tooltips
  */
-div#admin-toolbar.vertical div.admin-blocks div.admin-toolbar-menu { padding-bottom:100px; }
+div#admin-toolbar.vertical div.admin-blocks div.admin-toolbar-menu {
+  overflow:hidden;
+  padding-bottom:100px;
+  }
 
 div#admin-toolbar span.menu-description {
   color:#ccc;

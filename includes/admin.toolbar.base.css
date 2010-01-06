@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.base.css,v 1.1.2.3 2009/12/16 06:16:04 yhahn Exp $ */
+/* $Id: admin.toolbar.base.css,v 1.1.2.4 2010/01/06 19:25:18 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets ===========================================
@@ -174,11 +174,12 @@ div#admin-toolbar div.admin-blocks {
     top:0px;
     }
 
-    div#admin-toolbar.vertical div.admin-blocks { width:260px; }
+    div#admin-toolbar.vertical div.admin-blocks { width:0px; }
+    body.admin-expanded div#admin-toolbar.vertical div.admin-blocks { width:260px; }
     div#admin-toolbar.vertical div.admin-block  { width:240px; }
     div#admin-toolbar.vertical div.admin-tabs   { width:215px; }
 
-  body.admin-expanded div#admin-toolbar.vertical div.admin-blocks { position:absolute; top:0px; bottom:0px; }
+  body div#admin-toolbar.vertical div.admin-blocks { position:absolute; top:0px; bottom:0px; }
 
     body.admin-expanded div#admin-toolbar.vertical.ne div.admin-blocks,
     body.admin-expanded div#admin-toolbar.vertical.se div.admin-blocks { right:0px; }
