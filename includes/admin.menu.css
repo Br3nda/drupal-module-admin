@@ -63,24 +63,23 @@ div#admin-toolbar.horizontal span.menu-description {
   margin:0px;
   }
 
-#admin-toolbar.horizontal ul.admin-active-menu {
+#admin-toolbar.horizontal ul.drilldown-active-menu {
   float:left;
   width:60%;
   }
 
-#admin-toolbar.horizontal div.admin-pane ul.admin-active-menu {
+#admin-toolbar.horizontal div.admin-pane ul.drilldown-active-menu {
   float:none;
   width:auto;
   }
 
-#admin-toolbar.horizontal ul.admin-active-menu li {
+#admin-toolbar.horizontal ul.drilldown-active-menu li {
   float:left;
   width:50%;
   }
 
-  #admin-toolbar ul.admin-active-menu li { background:url(../images/sprite.png) 0% -85px no-repeat; }
-  #admin-toolbar ul.admin-active-menu li.leaf { background-position:0% -110px; }
-  #admin-toolbar ul.admin-active-menu li.expanded { cursor:pointer; }
+  #admin-toolbar ul.drilldown-active-menu li { background:url(../images/sprite.png) 0% -85px no-repeat; }
+  #admin-toolbar ul.drilldown-active-menu li.leaf { background-position:0% -110px; }
 
 #admin-toolbar ul.menu li a {
   -moz-border-radius:5px;
@@ -99,6 +98,8 @@ div#admin-toolbar.horizontal span.menu-description {
     background:url(../images/bleeds.png) 0px -30px repeat-x;
     }
 
-  #admin-toolbar ul.menu li a { display:none; }
-  #admin-toolbar ul.admin-active-menu li a { display:block; }
-  #admin-toolbar ul.admin-active-menu ul.menu li a { display:none; }
+/* Drilldown generic styles */
+.drilldown ul.menu li a { display:none !important; }
+.drilldown ul.drilldown-active-menu li a { display:block !important; }
+.drilldown ul.drilldown-active-menu li.expanded { cursor:pointer; }
+.drilldown ul.drilldown-active-menu ul.menu li a { display:none !important; }

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.9 2010/01/06 19:15:24 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.10 2010/01/10 16:24:40 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -11,6 +11,7 @@ function admin_init() {
   if (user_access('use admin toolbar')) {
     $path = drupal_get_path('module', 'admin');
     drupal_add_js("{$path}/includes/jquery.cookie.js");
+    drupal_add_js("{$path}/includes/jquery.drilldown.js");
     drupal_add_js("{$path}/includes/admin.toolbar.js");
     drupal_add_js("{$path}/includes/admin.menu.js");
     drupal_add_css("{$path}/includes/admin.toolbar.base.css");
