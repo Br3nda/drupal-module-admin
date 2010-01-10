@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.1 2010/01/10 16:24:40 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.2 2010/01/10 18:54:24 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -26,7 +26,7 @@
 
         $(settings.activeLink).each(function() {
           // Traverse backwards through menu parents and build breadcrumb array.
-          $(this).parents('ul.menu').each(function() {
+          $(this).parents('ul').each(function() {
             $(this).siblings('a').each(function() {
               breadcrumb.unshift($(this));
             });
@@ -35,15 +35,15 @@
           // If we have a child menu (actually a sibling in the DOM), use it
           // as the active menu. Otherwise treat our direct parent as the
           // active menu.
-          if ($(this).next().is('ul.menu')) {
+          if ($(this).next().is('ul')) {
             activeMenu = $(this).next();
             breadcrumb.push($(this));
           }
           else {
-            activeMenu = $(this).parents('ul.menu');
+            activeMenu = $(this).parents('ul');
           }
           if (activeMenu) {
-            $('ul.menu', menu).removeClass('drilldown-active-menu').removeClass('clear-block');
+            $('ul', menu).removeClass('drilldown-active-menu').removeClass('clear-block');
             $(activeMenu[0]).addClass('drilldown-active-menu').addClass('clear-block').parents('li').show();
           }
         });
@@ -58,10 +58,13 @@
             }
           }
           $('a', trail).click(function() {
-            var url = $(this).attr('href');
-            settings.activeLink = $('ul.menu a[href='+url+']', menu);
-            menu.drilldown('setActive', settings);
-            return false;
+            if ($(this).siblings().size() !== 0) {
+              var url = $(this).attr('href');
+              settings.activeLink = $('ul a[href='+url+']', menu);
+              menu.drilldown('setActive', settings);
+              return false;
+            }
+            return true;
           });
         }
 
@@ -75,18 +78,18 @@
 
         // Set initial active menu state.
         var activeLink;
-        if (settings.activePath && $('ul.menu a[href='+settings.activePath+']', menu).size() > 0) {
-          activeLink = $('ul.menu a[href='+settings.activePath+']', menu).addClass('active');
+        if (settings.activePath && $('ul a[href='+settings.activePath+']', menu).size() > 0) {
+          activeLink = $('ul a[href='+settings.activePath+']', menu).addClass('active');
         }
         if (!activeLink) {
-          activeLink = $('ul.menu a.active', menu).size() ? $('ul.menu a.active', menu) : $('ul.menu > li > a', menu);
+          activeLink = $('ul a.active', menu).size() ? $('ul a.active', menu) : $('ul > li > a', menu);
         }
         if (activeLink) {
           menu.drilldown('setActive', {'activeLink': $(activeLink[0]), 'trail': settings.trail});
         }
 
         // Attach click handlers to menu items
-        $('ul.menu li:not(.leaf)', this).click(function() {
+        $('ul li:has(ul)', this).click(function() {
           if ($(this).parent().is('.drilldown-active-menu')) {
             if (menu.data('disableMenu')) {
               return true;
@@ -99,7 +102,7 @@
             }
           }
         });
-        $('ul.menu li:not(.leaf) a', menu).click(function() {
+        $('ul li:has(ul) a', menu).click(function() {
           menu.data('disableMenu', true);
         });
         break;
