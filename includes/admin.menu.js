@@ -1,4 +1,4 @@
-// $Id: admin.menu.js,v 1.1.2.2 2010/01/10 16:24:40 yhahn Exp $
+// $Id: admin.menu.js,v 1.1.2.3 2010/01/10 18:15:09 yhahn Exp $
 
 Drupal.behaviors.adminToolbarMenu = function(context) {
   if (jQuery().drilldown) {
@@ -14,16 +14,16 @@ Drupal.behaviors.adminToolbarMenu = function(context) {
         // to that admin tab.
         menu.bind('refresh.drilldown', function() {
           $(trail + ' a').unbind('click').click(function() {
-              if ($(this).parents('div.admin-tab').is('.admin-tab-active')) {
-                var url = $(this).attr('href');
-                var settings = {'activeLink': $('ul.menu a[href='+url+']', menu), 'trail': trail};
-                menu.drilldown('setActive', settings);
-              }
-              else {
-                $(this).parents('div.admin-tab').click();
-              }
-              return false;
-            });
+            if ($(this).parents('div.admin-tab').is('.admin-tab-active')) {
+              var url = $(this).attr('href');
+              var settings = {'activeLink': $('ul.menu a[href='+url+']', menu), 'trail': trail};
+              menu.drilldown('setActive', settings);
+            }
+            else {
+              $(this).parents('div.admin-tab').click();
+            }
+            return false;
+          });
         });
       });
   }
