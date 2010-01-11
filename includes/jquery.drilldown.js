@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.2 2010/01/10 18:54:24 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.3 2010/01/11 19:09:16 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -43,7 +43,9 @@
             activeMenu = $(this).parents('ul');
           }
           if (activeMenu) {
+            $('.drilldown-active-trail', menu).removeClass('drilldown-active-trail');
             $('ul', menu).removeClass('drilldown-active-menu').removeClass('clear-block');
+            $(activeMenu[0]).parents('li').addClass('drilldown-active-trail');
             $(activeMenu[0]).addClass('drilldown-active-menu').addClass('clear-block').parents('li').show();
           }
         });
@@ -54,22 +56,33 @@
           trail.empty();
           for (var key in breadcrumb) {
             if (breadcrumb[key]) {
-              $(breadcrumb[key]).clone().addClass('depth-'+key).appendTo(trail);
+              // We don't use the $().clone() method here because of an
+              // IE & jQuery 1.2 bug.
+              // var clone = $(breadcrumb[key]).clone();
+              var clone = $(breadcrumb[key]).get(0).cloneNode(true);
+              $(clone)
+                .unbind('click')
+                .addClass('depth-'+key)
+                .appendTo(trail);
+
+              // We add a reference to the original link and a click handler
+              // that traces back to that instance to set as the active link.
+              $('a.depth-'+key, trail)
+                .data('original', $(breadcrumb[key]))
+                .click(function() {
+                  if ($(this).siblings().size() !== 0) {
+                    settings.activeLink = $(this).data('original');
+                    menu.drilldown('setActive', settings);
+                    return false;
+                  }
+                  return true;
+                });
             }
           }
-          $('a', trail).click(function() {
-            if ($(this).siblings().size() !== 0) {
-              var url = $(this).attr('href');
-              settings.activeLink = $('ul a[href='+url+']', menu);
-              menu.drilldown('setActive', settings);
-              return false;
-            }
-            return true;
-          });
         }
 
         // Event in case others need to update themselves when a new active
-        // link is s set.
+        // link is set.
         $(menu).trigger('refresh.drilldown');
         break;
       case 'init':

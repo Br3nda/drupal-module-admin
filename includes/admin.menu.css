@@ -87,19 +87,33 @@ div#admin-toolbar.horizontal span.menu-description {
 
   display:block;
   margin-left:25px;
+  height:15px;
   padding:5px 10px 4px;
   border-bottom:1px solid #222;
+
+  white-space:nowrap;
+  overflow:hidden;
   }
 
-  #admin-toolbar ul.menu li a.active { background:#222; }
+  #admin-toolbar ul.menu li a span.menu-description { white-space:normal; }
 
+  /* IE7 requires height to be explicitly set. */
+  #admin-toolbar ul.drilldown-active-menu li { height:25px; }
+
+  #admin-toolbar ul.menu li a.active { background:#222; }
   #admin-toolbar ul.menu li a:hover {
     color:#000;
     background:url(../images/bleeds.png) 0px -30px repeat-x;
     }
 
 /* Drilldown generic styles */
-.drilldown ul.menu li a { display:none !important; }
+.drilldown ul li { display:none !important; }
+.drilldown ul li a { display:none !important; }
+.drilldown ul li.drilldown-active-trail { display:block !important; }
+
+.drilldown ul.drilldown-active-menu li { display:block !important; }
 .drilldown ul.drilldown-active-menu li a { display:block !important; }
+.drilldown ul.drilldown-active-menu li ul { display:none !important; }
+
 .drilldown ul.drilldown-active-menu li.expanded { cursor:pointer; }
 .drilldown ul.drilldown-active-menu ul.menu li a { display:none !important; }
