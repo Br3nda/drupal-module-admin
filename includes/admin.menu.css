@@ -107,9 +107,9 @@ div#admin-toolbar.horizontal span.menu-description {
     }
 
 /* Drilldown generic styles */
-.drilldown ul li { display:none !important; }
-.drilldown ul li a { display:none !important; }
-.drilldown ul li.drilldown-active-trail { display:block !important; }
+.drilldown ul.menu li { display:none !important; }
+.drilldown ul.menu li a { display:none !important; }
+.drilldown ul.menu li.drilldown-active-trail { display:block !important; }
 
 .drilldown ul.drilldown-active-menu li { display:block !important; }
 .drilldown ul.drilldown-active-menu li a { display:block !important; }

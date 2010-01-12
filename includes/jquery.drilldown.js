@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.3 2010/01/11 19:09:16 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.4 2010/01/12 20:55:13 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -26,7 +26,7 @@
 
         $(settings.activeLink).each(function() {
           // Traverse backwards through menu parents and build breadcrumb array.
-          $(this).parents('ul').each(function() {
+          $(this).parents('ul.menu').each(function() {
             $(this).siblings('a').each(function() {
               breadcrumb.unshift($(this));
             });
@@ -35,16 +35,16 @@
           // If we have a child menu (actually a sibling in the DOM), use it
           // as the active menu. Otherwise treat our direct parent as the
           // active menu.
-          if ($(this).next().is('ul')) {
+          if ($(this).next().is('ul.menu')) {
             activeMenu = $(this).next();
             breadcrumb.push($(this));
           }
           else {
-            activeMenu = $(this).parents('ul');
+            activeMenu = $(this).parents('ul.menu');
           }
           if (activeMenu) {
             $('.drilldown-active-trail', menu).removeClass('drilldown-active-trail');
-            $('ul', menu).removeClass('drilldown-active-menu').removeClass('clear-block');
+            $('ul.menu', menu).removeClass('drilldown-active-menu').removeClass('clear-block');
             $(activeMenu[0]).parents('li').addClass('drilldown-active-trail');
             $(activeMenu[0]).addClass('drilldown-active-menu').addClass('clear-block').parents('li').show();
           }
@@ -91,18 +91,18 @@
 
         // Set initial active menu state.
         var activeLink;
-        if (settings.activePath && $('ul a[href='+settings.activePath+']', menu).size() > 0) {
-          activeLink = $('ul a[href='+settings.activePath+']', menu).addClass('active');
+        if (settings.activePath && $('ul.menu a[href='+settings.activePath+']', menu).size() > 0) {
+          activeLink = $('ul.menu a[href='+settings.activePath+']', menu).addClass('active');
         }
         if (!activeLink) {
-          activeLink = $('ul a.active', menu).size() ? $('ul a.active', menu) : $('ul > li > a', menu);
+          activeLink = $('ul.menu a.active', menu).size() ? $('ul.menu a.active', menu) : $('ul.menu > li > a', menu);
         }
         if (activeLink) {
           menu.drilldown('setActive', {'activeLink': $(activeLink[0]), 'trail': settings.trail});
         }
 
         // Attach click handlers to menu items
-        $('ul li:has(ul)', this).click(function() {
+        $('ul.menu li:has(ul.menu)', this).click(function() {
           if ($(this).parent().is('.drilldown-active-menu')) {
             if (menu.data('disableMenu')) {
               return true;
@@ -115,7 +115,7 @@
             }
           }
         });
-        $('ul li:has(ul) a', menu).click(function() {
+        $('ul.menu li:has(ul.menu) a', menu).click(function() {
           menu.data('disableMenu', true);
         });
         break;
