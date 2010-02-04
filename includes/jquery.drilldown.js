@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.4 2010/01/12 20:55:13 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.5 2010/02/04 00:34:32 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -18,8 +18,16 @@
 (function($) {
   $.fn.drilldown = function(method, settings) {
     var menu = this;
+    var activePath;
 
     switch (method) {
+      case 'goTo':
+        // If the passed link refers to the current page, don't follow through
+        // the link.
+        if (this.activePath && this.activePath === $(settings.activeLink).attr('href')) {
+          return false;
+        }
+        return true;
       case 'setActive':
         var breadcrumb = [];
         var activeMenu;
@@ -70,12 +78,15 @@
               $('a.depth-'+key, trail)
                 .data('original', $(breadcrumb[key]))
                 .click(function() {
-                  if ($(this).siblings().size() !== 0) {
-                    settings.activeLink = $(this).data('original');
+                  settings.activeLink = $(this).data('original');
+                  // If the clicked link does not reference the current
+                  // active menu, set it to be active.
+                  if (settings.activeLink.siblings('ul.drilldown-active-menu').size() === 0) {
                     menu.drilldown('setActive', settings);
                     return false;
                   }
-                  return true;
+                  // Otherwise, pass-through and allow the link to be clicked.
+                  return menu.drilldown('goTo', settings);
                 });
             }
           }
@@ -92,6 +103,7 @@
         // Set initial active menu state.
         var activeLink;
         if (settings.activePath && $('ul.menu a[href='+settings.activePath+']', menu).size() > 0) {
+          this.activePath = settings.activePath;
           activeLink = $('ul.menu a[href='+settings.activePath+']', menu).addClass('active');
         }
         if (!activeLink) {
