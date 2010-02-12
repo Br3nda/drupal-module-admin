@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.admin.inc,v 1.1.2.3.2.3 2010/01/05 04:20:08 yhahn Exp $
+// $Id: admin.admin.inc,v 1.1.2.3.2.4 2010/02/12 22:49:16 yhahn Exp $
 
 /**
  * System settings form for admin toolbar.
@@ -45,8 +45,10 @@ function admin_settings_form() {
   // Get default block options.
   $options = array();
   $enabled = array_filter(admin_get_settings('blocks')) + admin_get_default_blocks(TRUE);
-  foreach (array_intersect_key($block_info, $enabled) as $bid => $info) {
-    $options[$bid] = $info['info'];
+  foreach ($block_info as $bid => $info) {
+    if (!empty($enabled[$bid])) {
+      $options[$bid] = $info['info'];
+    }
   }
   asort($options);
 
