@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.11 2010/02/12 23:02:22 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.12 2010/02/12 23:31:06 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -281,6 +281,10 @@ function admin_set_admin_blocks($reset = FALSE) {
           list($module, $delta) = $split;
           $block = module_invoke($module, 'block', 'view', $delta);
           if (!empty($block['content'])) {
+            if ($module === 'block') {
+              global $theme;
+              $block['subject'] = db_result(db_query("SELECT title FROM {blocks} WHERE module = 'block' AND delta = '%s'", $delta));
+            }
             $blocks["{$module}-{$delta}"] = $block;
           }
         }
