@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.10 2010/01/10 16:24:40 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.11 2010/02/12 23:02:22 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -316,7 +316,7 @@ function admin_preprocess_pre_page(&$vars) {
  * Implementation of hook_preprocess_page().
  */
 function admin_preprocess_page(&$vars) {
-  if ($blocks = admin_get_admin_blocks()) {
+  if (!admin_suppress(FALSE) && $blocks = admin_get_admin_blocks()) {
     $position = admin_get_settings('position');
     $layout = admin_get_settings('layout');
     $class = admin_get_settings('expanded') ? 'admin-expanded' : '';
@@ -328,10 +328,32 @@ function admin_preprocess_page(&$vars) {
  * Implementation of hook_footer().
  */
 function admin_footer() {
-  if ($blocks = admin_get_admin_blocks()) {
+  if (!admin_suppress(FALSE) && $blocks = admin_get_admin_blocks()) {
     $position = admin_get_settings('position');
     $layout = admin_get_settings('layout');
     $class = admin_get_settings('expanded') ? 'admin-expanded' : '';
     return theme('admin_toolbar', $blocks, $position, $layout);
   }
+}
+
+/**
+ * Implementation of hook_suppress().
+ * 
+ * Suppress display of administration toolbar.
+ *
+ * This function should be called from within another module's page callback
+ * preferably using module_invoke_all('suppress') when the menu should not be
+ * displayed. This is useful for modules that implement popup pages or other
+ * special pages where the menu would be distracting or break the layout.
+ *
+ * @param $set
+ *   Defaults to TRUE. If called before hook_footer(), the menu will not be
+ *   displayed. If FALSE is passed, the suppression state is returned.
+ */
+function admin_suppress($set = TRUE) {
+  static $suppress = FALSE;
+  if (!empty($set) && $suppress === FALSE) {
+    $suppress = TRUE;
+  }
+  return $suppress;
 }
