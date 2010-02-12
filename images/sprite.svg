@@ -15,9 +15,9 @@
    sodipodi:version="0.32"
    inkscape:version="0.46"
    version="1.0"
-   sodipodi:docname="toolbar.svg"
+   sodipodi:docname="sprite.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/yh/www/d6/sites/all/modules/admin/images/sprite.png"
+   inkscape:export-filename="/home/devseed/atrium/profiles/openatrium/modules/contrib/admin/images/sprite.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -1352,12 +1352,12 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.25"
-     inkscape:cx="242.44536"
-     inkscape:cy="53.931656"
+     inkscape:zoom="1"
+     inkscape:cx="219.5655"
+     inkscape:cy="34.828761"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
+     inkscape:current-layer="layer5"
+     showgrid="true"
      inkscape:snap-bbox="true"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -1380,6 +1380,20 @@
   </metadata>
   <g
      inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="BG"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <rect
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2640"
+       width="240"
+       height="135"
+       x="0"
+       y="-1.6320278e-14" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Root"
      sodipodi:insensitive="true"
@@ -1393,10 +1407,11 @@
        y="200" />
   </g>
   <g
-     inkscape:label="Layer 1"
+     inkscape:label="Sprite"
      inkscape:groupmode="layer"
      id="layer1"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <g
        id="g3368"
        style="fill:#c0c0c0;fill-opacity:1" />
@@ -1422,34 +1437,6 @@
          id="tspan3812"
          x="194.75101"
          y="234.31734" /></text>
-    <rect
-       style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect4965"
-       width="10"
-       height="35"
-       x="-10"
-       y="0" />
-    <rect
-       y="35"
-       x="-20"
-       height="35"
-       width="10"
-       id="rect5476"
-       style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1" />
-    <rect
-       style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect5478"
-       width="10"
-       height="15"
-       x="-10"
-       y="70" />
-    <rect
-       y="85"
-       x="-20"
-       height="25"
-       width="10"
-       id="rect5494"
-       style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1" />
     <g
        id="g2670"
        transform="translate(0,-5)">
@@ -1482,13 +1469,45 @@
          y="-16"
          ry="0.5" />
     </g>
-    <rect
-       style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect3090"
-       width="10"
-       height="25"
-       x="-10"
-       y="110" />
+    <g
+       id="g3413"
+       transform="translate(-20,0)">
+      <rect
+         y="0"
+         x="-10"
+         height="35"
+         width="10"
+         id="rect4965"
+         style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect5476"
+         width="10"
+         height="35"
+         x="-20"
+         y="35" />
+      <rect
+         y="70"
+         x="-10"
+         height="15"
+         width="10"
+         id="rect5478"
+         style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect5494"
+         width="10"
+         height="25"
+         x="-20"
+         y="85" />
+      <rect
+         y="110"
+         x="-10"
+         height="25"
+         width="10"
+         id="rect3090"
+         style="opacity:1;fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:8, 4;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
     <g
        id="g3918"
        transform="translate(-3,-22.5)">
@@ -1618,5 +1637,103 @@
          d="M 35,0 C 35,0 26.25,13.125 26.25,13.125 C 26.25,13.125 0,35 0,35"
          style="opacity:1;fill:url(#linearGradient2664);fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Sprite.RTL"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3368"
+       id="use3553"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#text3539"
+       id="use3555"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#text3810"
+       id="use3557"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g2670"
+       id="use3559"
+       transform="matrix(-1,0,0,1,240,0)"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3918"
+       id="use3563"
+       transform="matrix(-1,0,0,1,240,0)"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3914"
+       id="use3565"
+       transform="matrix(-1,0,0,1,240,0)"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g2666"
+       id="use3567"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3453"
+       id="use3569"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3481"
+       id="use3571"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g3497"
+       id="use3573"
+       width="240"
+       height="135" />
+    <use
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#g2650"
+       id="use3575"
+       width="240"
+       height="135" />
   </g>
 </svg>
