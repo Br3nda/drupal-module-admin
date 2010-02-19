@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.12 2010/02/12 23:31:06 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.13 2010/02/19 18:35:59 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -199,15 +199,16 @@ function admin_theme($cache, $type, $theme, $path) {
  * Implementation of hook_theme_registry_alter().
  */
 function admin_theme_registry_alter(&$theme_registry) {
-  // Add an additional page preprocess function prior to all others including template_preprocess_page()
-  // so that our blocks can include JS files as needed.
+  // Remove any existing instances of our pre page preprocessor.
   $position = array_search('admin_preprocess_pre_page', $theme_registry['page']['preprocess functions']);
   if ($position !== FALSE) {
     unset($theme_registry['page']['preprocess functions'][$position]);
-    array_unshift($theme_registry['page']['preprocess functions'], 'admin_preprocess_pre_page');
   }
-  else {
-    array_unshift($theme_registry['page']['preprocess functions'], 'admin_preprocess_pre_page');
+  // Add an additional page preprocess function prior to template_preprocess_page()
+  // so that our blocks can include JS files as needed.
+  $position = array_search('template_preprocess_page', $theme_registry['page']['preprocess functions']);
+  if ($position !== FALSE) {
+    array_splice($theme_registry['page']['preprocess functions'], $position, 0, 'admin_preprocess_pre_page');
   }
 }
 
@@ -305,6 +306,8 @@ function admin_get_admin_blocks($reset = FALSE) {
  * Preprocessor that runs *before* template_preprocess_page().
  */
 function admin_preprocess_pre_page(&$vars) {
+  print 'blocks';
+
   admin_set_admin_blocks();
   if (user_access('use admin toolbar') && $trail = menu_get_active_trail()) {
     do {
