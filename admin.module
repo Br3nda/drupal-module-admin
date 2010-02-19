@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.13 2010/02/19 18:35:59 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.14 2010/02/19 18:40:43 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -306,8 +306,6 @@ function admin_get_admin_blocks($reset = FALSE) {
  * Preprocessor that runs *before* template_preprocess_page().
  */
 function admin_preprocess_pre_page(&$vars) {
-  print 'blocks';
-
   admin_set_admin_blocks();
   if (user_access('use admin toolbar') && $trail = menu_get_active_trail()) {
     do {
