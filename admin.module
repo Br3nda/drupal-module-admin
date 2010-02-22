@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.14 2010/02/19 18:40:43 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.15 2010/02/22 16:02:42 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -28,6 +28,7 @@ function admin_block($op = 'list', $delta = 0, $edit = array()) {
     case 'list':
       $blocks = array();
       $blocks['create'] = array('info' => t('Create content'), 'admin' => TRUE);
+      $blocks['theme'] = array('info' => t('Theme switcher'), 'admin' => TRUE);
       if (module_exists('menu')) {
         $blocks['menu'] = array('info' => t('Administration menu'), 'admin' => TRUE);
       }
@@ -51,6 +52,9 @@ function admin_block($op = 'list', $delta = 0, $edit = array()) {
             );
           }
           break;
+        case 'theme':
+          module_load_include('inc', 'admin', 'includes/admin.theme');
+          return admin_block_theme();
         case 'menu':
           $item = menu_get_item('admin');
           if ($item && $item['access']) {
