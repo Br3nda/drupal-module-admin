@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.15 2010/02/22 16:02:42 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.16 2010/04/16 20:28:49 mfer Exp $
 
 /**
  * Implementation of hook_init().
@@ -29,6 +29,7 @@ function admin_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks = array();
       $blocks['create'] = array('info' => t('Create content'), 'admin' => TRUE);
       $blocks['theme'] = array('info' => t('Theme switcher'), 'admin' => TRUE);
+      $blocks['account'] = array('info' => t('My Account'), 'admin' => TRUE);
       if (module_exists('menu')) {
         $blocks['menu'] = array('info' => t('Administration menu'), 'admin' => TRUE);
       }
@@ -55,6 +56,8 @@ function admin_block($op = 'list', $delta = 0, $edit = array()) {
         case 'theme':
           module_load_include('inc', 'admin', 'includes/admin.theme');
           return admin_block_theme();
+        case 'account':
+          return admin_account_block();
         case 'menu':
           $item = menu_get_item('admin');
           if ($item && $item['access']) {
@@ -347,7 +350,7 @@ function admin_footer() {
 
 /**
  * Implementation of hook_suppress().
- * 
+ *
  * Suppress display of administration toolbar.
  *
  * This function should be called from within another module's page callback
@@ -365,4 +368,33 @@ function admin_suppress($set = TRUE) {
     $suppress = TRUE;
   }
   return $suppress;
+}
+
+/**
+ * My Account block.
+ */
+function admin_account_block() {
+  $block = array(
+    'subject' => t('My Account'),
+    'content' => '',
+  );
+  global $user;
+  if ($user->uid > 0) {
+    $menu = array();
+    $menu[] = array(
+      'data' => l(t('View my account'), 'user/'. $user->uid),
+      'class' => 'leaf',
+    );
+    $menu[] = array(
+      'data' => l(t('Edit my account'), 'user/'. $user->uid .'/edit'),
+      'class' => 'leaf',
+    );
+    $menu[] = array(
+      'data' => l(t('Logout'), 'logout'),
+      'class' => 'leaf',
+    );
+
+    $block['content'] = theme('item_list', $menu, NULL, 'ul', array('class' => 'menu'));
+  }
+  return $block;
 }
