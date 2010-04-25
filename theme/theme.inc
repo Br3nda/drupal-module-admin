@@ -11,11 +11,11 @@ function template_preprocess_admin_toolbar(&$vars) {
     $vars['tabs'] = array();
     foreach ($vars['blocks'] as $bid => $block) {
       $vars['tabs'][$bid] = array(
-        'title' => $block['subject'],
+        'title' => $block->subject,
         'attributes' => array('id' => 'admin-tab-'. $bid),
       );
       if ($bid == $active) {
-        $vars['blocks'][$bid]['class'] = 'admin-active';
+        $vars['blocks'][$bid]->class = 'admin-active';
         $vars['tabs'][$bid]['active'] = TRUE;
       }
     }
