@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.18 2010/04/25 17:04:02 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.19 2010/04/25 17:26:45 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -355,7 +355,7 @@ function admin_set_admin_blocks($reset = FALSE) {
           $block = new stdClass();
           $block->module = $module;
           $block->delta = $delta;
-          $block->cache = $cache;
+          $block->cache = is_numeric($cache) ? $cache : BLOCK_NO_CACHE;
         }
         if (!empty($block)) {
           if ($_SERVER['REQUEST_METHOD'] == 'GET' && $cid = admin_block_get_cache_id($block)) {
@@ -368,9 +368,9 @@ function admin_set_admin_blocks($reset = FALSE) {
             }
           }
           else {
-            $array = module_invoke($module, 'block', 'view', $delta);
+            $array = module_invoke($block->module, 'block', 'view', $block->delta);
           }
-          if (!empty($array)) {
+          if (!empty($array['content'])) {
             foreach ($array as $k => $v) {
               $block->{$k} = $v;
             }
