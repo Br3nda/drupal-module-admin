@@ -6,6 +6,7 @@
     <!--[if lt IE 7]>
       <style type="text/css" media="screen">@import "<?php echo $base_path, $directory; ?>/ie6.css";</style>
     <![endif]-->
+    <?php print $scripts ?>
     <title><?php print $head_title ?></title>
   </head>
   <body class='admin <?php print $body_classes ?>'>
@@ -73,7 +74,6 @@
 
   </div>
 
-  <?php print $scripts ?>
   <?php print $closure ?>
 
   </body>
