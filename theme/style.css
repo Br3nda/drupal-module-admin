@@ -794,3 +794,35 @@ div.admin-options div.form-item {
   padding:0px;
   border:0px;
   }
+
+/* update status page */
+table.update tr.ok {
+  background-color:#dfd;
+  }
+table.update tr.warning {
+  background-color:#ffd;
+  }
+table.update tr.error {
+  background-color:#fcc;
+  }
+table.update tr.odd td,
+table.update tr.even td {
+  background-color:transparent;
+  }
+
+table.update table.version {
+  margin-top:5px;
+  margin-bottom:0px;
+  height:20px;
+  }
+
+table.update td.version-links ul.links,
+table.update td.version-links a {
+  padding-left:15px;
+  text-align:right;
+  }
+
+table.update div,
+table.update a {
+  font-size:12px;
+  }
