@@ -1,5 +1,5 @@
 <?php
-// $Id: template.php,v 1.1.2.3 2009/07/14 11:35:03 karens Exp $
+// $Id: template.php,v 1.1.2.4 2010/07/15 19:03:07 technicolorenvy Exp $
 
 /**
  * Display the list of available node types for node creation.
@@ -91,7 +91,7 @@ function slate_node_form($form) {
 /**
  * Override of theme_fieldset().
  */
-function slate_fieldset(&$element) {
+function slate_fieldset($element) {
   $attr = isset($element['#attributes']) ? $element['#attributes'] : array();
   $attr['class'] = !empty($attr['class']) ? $attr['class'] : '';
   $attr['class'] .= ' fieldset';

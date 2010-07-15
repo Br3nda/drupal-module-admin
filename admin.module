@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23 2009/07/30 14:41:34 yhahn Exp $
+// $Id: admin.module,v 1.1.2.24 2010/07/15 19:03:07 technicolorenvy Exp $
 
 /**
  * Implementation of hook_init().
@@ -210,7 +210,7 @@ function admin_flush_caches() {
  * Implementation of hook_system_info_alter().
  * Throw a flag that tells us we need to reinstantiate the admin theme.
  */
-function admin_system_info_alter(&$info, &$theme) {
+function admin_system_info_alter(&$info, $theme) {
   static $once;
   if (!isset($once)) {
     $once = TRUE;
