@@ -8,7 +8,7 @@ function admin_preprocess_admin_toolbar(&$vars) {
   foreach ($vars['tree'] as $depth => $menus) {
     foreach ($menus as $href => $links) {
       $class = ($depth > 0) ? 'collapsed' : '';
-      if ($depth > 0 && admin_in_active_trail($href)) {
+      if (($depth - intval(empty($links))) > 0 && admin_in_active_trail($href)) {
         $class = '';
         $vars['collapsed'] = FALSE;
       }
