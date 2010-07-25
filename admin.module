@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.24 2010/07/15 19:03:07 technicolorenvy Exp $
+// $Id: admin.module,v 1.1.2.25 2010/07/25 15:41:00 technicolorenvy Exp $
 
 /**
  * Implementation of hook_init().
@@ -25,17 +25,19 @@ function admin_init() {
   $admin_theme = variable_get('admin_theme', 'slate');
 
   // Initialize the slate theme. Bypass the theme system entirely so we can load our own theme into place.
-  if (variable_get('node_admin_theme', 0) && (strpos($_GET['q'], 'node/add') === 0 || strpos($_GET['q'], 'admin/content/add') === 0 || (arg(0) == 'node' && arg(2) == 'edit'))) {
-    _admin_init_theme();
-  }
-  else if (arg(0) == 'admin' && ($admin_theme == 'slate' || empty($admin_theme))) {
-    if (strpos($_GET['q'], 'admin/build/block') === 0) {
-      if (in_array(arg(3), array('configure', 'delete', 'add'), TRUE)) {
+  if ($admin_theme == 'slate' || empty($admin_theme)) {
+    if (variable_get('node_admin_theme', 0) && (strpos($_GET['q'], 'node/add') === 0 || strpos($_GET['q'], 'admin/content/add') === 0 || (arg(0) == 'node' && arg(2) == 'edit'))) {
+      _admin_init_theme();
+    }
+    else if (arg(0) == 'admin') {
+      if (strpos($_GET['q'], 'admin/build/block') === 0) {
+        if (in_array(arg(3), array('configure', 'delete', 'add'), TRUE)) {
+          _admin_init_theme();
+        }
+      }
+      else {
         _admin_init_theme();
       }
-    }
-    else {
-      _admin_init_theme();
     }
   }
   else if (function_exists('admin_theme_init') && $GLOBALS['custom_theme'] == 'slate') {
@@ -366,6 +368,9 @@ function views_admin_link($type, $object) {
         'attributes' => array('class' => 'icon-edit'),
         'query' => array('destination' => $_GET['q']),
       );
+      if ($display_id = $object->display_handler->display->id) {
+        $links['views-edit']['fragment'] = 'views-tab-'. $display_id;
+      }
     }
   }
   return $links;
