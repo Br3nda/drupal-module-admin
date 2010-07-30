@@ -1,4 +1,4 @@
-// $Id: admin.toolbar.js,v 1.1.2.6 2010/04/16 19:34:39 yhahn Exp $
+// $Id: admin.toolbar.js,v 1.1.2.7 2010/07/30 20:36:06 yhahn Exp $
 
 Drupal.behaviors.adminToolbar = function(context) {
   $('#admin-toolbar:not(.processed)').each(function() {
@@ -141,9 +141,14 @@ Drupal.adminToolbar.getState = function(key) {
     var query = cookie ? cookie.split('&') : [];
     if (query) {
       for (var i in query) {
-        var values = query[i].split('=');
-        if (values.length === 2) {
-          Drupal.adminToolbar.state[values[0]] = values[1];
+        // Extra check to avoid js errors in Chrome, IE and Safari when
+        // combined with JS like twitter's widget.js.
+        // See http://drupal.org/node/798764.
+        if (typeof(query[i]) == 'string') {
+          var values = query[i].split('=');
+          if (values.length === 2) {
+            Drupal.adminToolbar.state[values[0]] = values[1];
+          }
         }
       }
     }
