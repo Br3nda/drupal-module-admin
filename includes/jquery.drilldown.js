@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.6 2010/07/30 07:23:42 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.7 2010/07/30 22:07:39 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -68,10 +68,10 @@
             if (breadcrumb[key]) {
               // We don't use the $().clone() method here because of an
               // IE & jQuery 1.2 bug.
-              // var clone = $(breadcrumb[key]).clone();
-              var clone = $(breadcrumb[key]).get(0).cloneNode(true);
-              $(clone)
-                .unbind('click')
+              var clone = $('<a></a>')
+                .attr('href', $(breadcrumb[key]).eq(0).attr('href'))
+                .attr('class', $(breadcrumb[key]).eq(0).attr('class'))
+                .html($(breadcrumb[key]).eq(0).html())
                 .addClass('depth-'+key)
                 .appendTo(trail);
 
