@@ -105,6 +105,7 @@ function theme_admin_menu_tree($tree) {
 function theme_admin_menu_item_link($link) {
   $link['localized_options'] = empty($link['localized_options']) ? array() : $link['localized_options'];
   $link['localized_options']['html'] = TRUE;
+  $link['localized_options']['purl'] = array('disabled' => TRUE);
   $link['description'] = check_plain(truncate_utf8(strip_tags($link['description']), 150, TRUE, TRUE));
   $link['title'] .= !empty($link['description']) ? "<span class='menu-description'>{$link['description']}</span>" : '';
   return l($link['title'], $link['href'], $link['localized_options']);
