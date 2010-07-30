@@ -1,4 +1,4 @@
-// $Id: jquery.drilldown.js,v 1.1.2.5 2010/02/04 00:34:32 yhahn Exp $
+// $Id: jquery.drilldown.js,v 1.1.2.6 2010/07/30 07:23:42 yhahn Exp $
 
 /**
  * Generic menu drilldown plugin for standard Drupal menu tree markup.
@@ -35,9 +35,11 @@
         $(settings.activeLink).each(function() {
           // Traverse backwards through menu parents and build breadcrumb array.
           $(this).parents('ul.menu').each(function() {
-            $(this).siblings('a').each(function() {
-              breadcrumb.unshift($(this));
-            });
+            if ($(this).parents('ul.menu').size() > 0) {
+              $(this).siblings('a').each(function() {
+                breadcrumb.unshift($(this));
+              });
+            }
           });
 
           // If we have a child menu (actually a sibling in the DOM), use it
