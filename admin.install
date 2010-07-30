@@ -1,17 +1,23 @@
 <?php
-// $Id: admin.install,v 1.1.2.7.2.3 2010/07/30 22:29:31 yhahn Exp $
+// $Id: admin.install,v 1.1.2.7.2.4 2010/07/30 22:48:22 yhahn Exp $
 
 /**
  * Implementation of hook_install().
  */
 function admin_install() {
-  db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'admin', 'Admin', 'Admin links.');
+  if (db_table_exists('menu_custom') && !db_result(db_query("SELECT menu_name FROM {menu_custom} WHERE menu_name = 'admin'"))) {
+    $t = get_t();
+    db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'admin', $t('Admin'), $t('Administrative links.'));
+  }
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function admin_uninstall() {
+  if (db_table_exists('menu_custom')) {
+    db_query("DELETE FROM {menu_custom} WHERE menu_name = 'admin'");
+  }
   variable_del('admin_toolbar');
 }
 
