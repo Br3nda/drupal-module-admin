@@ -8,12 +8,12 @@ div#admin-toolbar div.admin-tab.admin-menu #admin-tab-admin-menu {
   position:relative;
   }
 
-div#admin-toolbar div.admin-tab.admin-menu a {
+div#admin-toolbar div.admin-tab a {
   background:url(../images/sprite.png) 100% -70px no-repeat;
   padding-right:20px;
   }
 
-  div#admin-toolbar div.admin-tab.admin-menu a:last-child {
+  div#admin-toolbar div.admin-tab a:last-child {
     background:transparent;
     padding:0px;
     }
