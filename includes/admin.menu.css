@@ -61,6 +61,7 @@ div#admin-toolbar.horizontal span.menu-description {
   background:transparent;
   padding:0px;
   margin:0px;
+  border:0px;
   }
 
 #admin-toolbar.horizontal ul.drilldown-active-menu {
