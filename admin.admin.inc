@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.admin.inc,v 1.1.2.3.2.5 2010/04/25 16:39:10 yhahn Exp $
+// $Id: admin.admin.inc,v 1.1.2.3.2.6 2010/07/31 21:12:14 yhahn Exp $
 
 /**
  * System settings form for admin toolbar.
@@ -30,6 +30,16 @@ function admin_settings_form() {
       'sw' => t('Bottom left'),
     ),
     '#default_value' => admin_get_settings('position'),
+  );
+  $form['admin_toolbar']['behavior'] = array(
+    '#type' => 'select',
+    '#title' => t('State on new pages'),
+    '#description' => t('Choose toolbar behavior on new page loads.'),
+    '#options' => array(
+      'df' => t('Remember from previous page'),
+      'ah' => t('Collapsed'),
+    ),
+    '#default_value' => admin_get_settings('behavior'),
   );
 
   $block_info = array();

@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.base.css,v 1.1.2.4 2010/01/06 19:25:18 yhahn Exp $ */
+/* $Id: admin.toolbar.base.css,v 1.1.2.5 2010/07/31 21:12:14 yhahn Exp $ */
 
 /**
  * Admin toolbar CSS resets ===========================================
@@ -197,6 +197,13 @@ div#admin-toolbar div.admin-blocks {
    * Horizontal =======================================================
    */
   div#admin-toolbar.horizontal { left:0px; right:0px; }
+  body.admin-expanded div#admin-toolbar.horizontal div.admin-blocks { height:260px; }
+
+  body.admin-expanded.admin-horizontal.admin-ne,
+  body.admin-expanded.admin-horizontal.admin-nw { margin-top:260px; }
+
+  body.admin-expanded.admin-horizontal.admin-sw,
+  body.admin-expanded.admin-horizontal.admin-se { margin-bottom:260px; }
 
 /**
  * Toggler ============================================================
@@ -233,6 +240,7 @@ div#admin-toolbar span.admin-toggle {
 div#admin-toolbar.horizontal div.admin-tabs {
   height:30px;
   padding:5px 10px 0px;
+  overflow:hidden;
   }
 
 div#admin-toolbar.vertical div.admin-tabs {
@@ -305,8 +313,9 @@ div#admin-toolbar div.admin-blocks div.admin-block {
    */
   div#admin-toolbar.horizontal div.block-content {
     position:relative;
-    max-width:960px;
-    min-height:75px;
+    height:200px;
+    overflow-x:hidden;
+    overflow-y:auto;
     }
 
   /**
