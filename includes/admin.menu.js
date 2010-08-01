@@ -1,4 +1,4 @@
-// $Id: admin.menu.js,v 1.1.2.8 2010/08/01 03:23:49 yhahn Exp $
+// $Id: admin.menu.js,v 1.1.2.9 2010/08/01 05:07:31 yhahn Exp $
 
 Drupal.behaviors.adminToolbarMenu = function(context) {
   if (jQuery().drilldown) {
@@ -7,6 +7,7 @@ Drupal.behaviors.adminToolbarMenu = function(context) {
       .each(function() {
         var menu = $(this);
         var trail = '#admin-toolbar div.admin-tab.' + $(this).attr('id').split('block-')[1] + ' span';
+        var rootTitle = $(trail).text();
 
         if ($('a:has(span.menu-description)', menu).size() > 0) {
           menu.addClass('admin-toolbar-menu-hover');
@@ -50,7 +51,11 @@ Drupal.behaviors.adminToolbarMenu = function(context) {
         });
 
         // Init drilldown plugin.
-        menu.drilldown('init', {'activePath': Drupal.settings.activePath, 'trail': trail});
+        menu.drilldown('init', {
+          activePath: Drupal.settings.activePath,
+          trail: trail,
+          rootTitle: rootTitle
+        });
       });
   }
 };

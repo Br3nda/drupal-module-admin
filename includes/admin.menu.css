@@ -78,7 +78,9 @@ div#admin-toolbar.horizontal a.menu-hover span.menu-description {
   }
 
   #admin-toolbar ul.drilldown-active-menu li { background:url(../images/sprite.png) 0% -85px no-repeat; }
-  #admin-toolbar ul.drilldown-active-menu li.leaf { background-position:0% -110px; }
+
+  #admin-toolbar ul.menu li.leaf,
+  #admin-toolbar ul.drilldown-active-menu li.leaf { background:url(../images/sprite.png) 0% -110px no-repeat; }
 
 #admin-toolbar ul.menu li a {
   -moz-border-radius:5px;
