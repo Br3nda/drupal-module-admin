@@ -60,6 +60,7 @@ div#admin-toolbar.horizontal a.menu-hover span.menu-description {
   padding:0px;
   margin:0px;
   border:0px;
+  overflow:hidden /* IE7 */;
   }
 
 #admin-toolbar.horizontal ul.drilldown-active-menu {
