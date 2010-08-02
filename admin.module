@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.21 2010/08/01 05:19:03 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.22 2010/08/02 14:33:04 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -396,6 +396,11 @@ function admin_set_admin_blocks($reset = FALSE) {
               global $theme;
               $block->subject = db_result(db_query("SELECT title FROM {blocks} WHERE module = 'block' AND delta = '%s'", $delta));
             }
+            // This is here simpy to trigger any preprocess functions that may
+            // add javascript, etc. for this block. Note that the output is
+            // thrown away.
+            theme('block', $block);
+
             $blocks["{$module}-{$delta}"] = $block;
           }
         }
