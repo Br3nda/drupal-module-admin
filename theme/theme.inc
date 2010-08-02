@@ -10,6 +10,10 @@ function template_preprocess_admin_toolbar(&$vars) {
   if (!empty($vars['blocks'])) {
     $vars['tabs'] = array();
     foreach ($vars['blocks'] as $bid => $block) {
+      // This is here simpy to trigger any preprocess functions that may add
+      // javascript, etc. for this block. Note that the output is thrown away.
+      theme('block', $block);
+
       $vars['tabs'][$bid] = array(
         'title' => $block->subject,
         'attributes' => array('id' => 'admin-tab-'. $bid),
