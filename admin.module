@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.22 2010/08/02 14:33:04 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.23 2010/08/02 19:33:38 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -374,6 +374,7 @@ function admin_set_admin_blocks($reset = FALSE) {
           $block->module = $module;
           $block->delta = $delta;
           $block->cache = is_numeric($cache) ? $cache : BLOCK_NO_CACHE;
+          $block->region = 'admin_toolbar'; // Fake the block region.
         }
         if (!empty($block)) {
           if ($_SERVER['REQUEST_METHOD'] == 'GET' && $cid = admin_block_get_cache_id($block)) {
