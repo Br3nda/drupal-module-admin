@@ -63,10 +63,10 @@ div#admin-toolbar.horizontal a.menu-hover span.menu-description {
   }
 
 /* IE7 */
-* html #admin-toolbar ul.menu,
-* html #admin-toolbar ul.menu ul,
-* html #admin-toolbar ul.menu li,
-* html #admin-toolbar ul.menu li a { overflow:hidden; }
+*:first-child+html #admin-toolbar ul.menu,
+*:first-child+html #admin-toolbar ul.menu ul,
+*:first-child+html #admin-toolbar ul.menu li,
+*:first-child+html #admin-toolbar ul.menu li a { overflow:hidden; }
 
 #admin-toolbar.horizontal ul.drilldown-active-menu {
   float:left;
