@@ -105,6 +105,7 @@ div#admin-toolbar.horizontal a.menu-hover span.menu-description {
   #admin-toolbar ul.menu li a span.menu-description { white-space:normal; }
 
   /* IE7 requires height to be explicitly set. */
+  #admin-toolbar ul.menu li.leaf,
   #admin-toolbar ul.drilldown-active-menu li { height:25px; }
 
   #admin-toolbar ul.menu li a.active { background:#222; }
