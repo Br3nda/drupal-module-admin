@@ -83,10 +83,10 @@ function theme_admin_menu_tree_output($tree) {
     $link = theme('admin_menu_item_link', $data['link']);
     $in_active_trail = isset($data['link']['in_active_trail']) ? $data['link']['in_active_trail'] : FALSE;
     if ($data['below']) {
-      $output .= theme('admin_menu_item', $link, $data['link']['has_children'], theme('admin_menu_tree_output', $data['below']), $in_active_trail, $extra_class);
+      $output .= theme('menu_item', $link, $data['link']['has_children'], theme('admin_menu_tree_output', $data['below']), $in_active_trail, $extra_class);
     }
     else {
-      $output .= theme('admin_menu_item', $link, $data['link']['has_children'], '', $in_active_trail, $extra_class);
+      $output .= theme('menu_item', $link, $data['link']['has_children'], '', $in_active_trail, $extra_class);
     }
   }
   return $output ? theme('admin_menu_tree', $output) : '';
@@ -99,15 +99,6 @@ function theme_admin_menu_tree_output($tree) {
  */
 function theme_admin_menu_tree($tree) {
   return theme_menu_tree($tree);
-}
-
-/**
- * Alternative to theme_admin_menu_item().
- * Ensures custom theme-level overrides of theme_menu_item() do not break
- * markup expected by admin.
- */
-function theme_admin_menu_item($link, $has_children, $menu = '', $in_active_trail = FALSE, $extra_class = NULL) {
-  return theme_menu_item($link, $has_children, $menu, $in_active_trail, $extra_class);
 }
 
 /**

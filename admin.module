@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.24 2010/08/09 15:30:46 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.25 2010/08/09 18:07:18 yhahn Exp $
 
 /**
  * Implementation of hook_init().
@@ -257,17 +257,6 @@ function admin_theme($cache, $type, $theme, $path) {
   );
   $items['admin_menu_tree'] = array(
     'arguments' => array('menu' => array()),
-    'path' => $path . '/theme',
-    'file' => 'theme.inc',
-  );
-  $items['admin_menu_item'] = array(
-    'arguments' => array(
-      'link' => NULL,
-      'has_children' => NULL,
-      'menu' => '',
-      'in_active_trail' => FALSE,
-      'extra_class' => NULL
-    ),
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
