@@ -12,7 +12,7 @@ function template_preprocess_admin_toolbar(&$vars) {
     foreach ($vars['blocks'] as $bid => $block) {
       $vars['tabs'][$bid] = array(
         'title' => $block->subject,
-        'attributes' => array('id' => 'admin-tab-'. $bid),
+        'attributes' => array('id' => 'admin-tab-' . $bid),
       );
       if ($bid == $active) {
         $vars['blocks'][$bid]->class = 'admin-active';
@@ -26,16 +26,16 @@ function template_preprocess_admin_toolbar(&$vars) {
  * Theme function for form API element '#type' => 'admin_panes'.
  */
 function template_preprocess_admin_panes(&$vars) {
-  drupal_add_js(drupal_get_path('module', 'admin') .'/includes/admin.toolbar.js');
+  drupal_add_js(drupal_get_path('module', 'admin') . '/includes/admin.toolbar.js');
   $vars['layout'] = admin_get_settings('layout');
   $vars['labels'] = $vars['panels'] = $vars['others'] = array();
   $first = TRUE;
   foreach (element_children($vars['element']) as $key) {
     if (!isset($vars['element'][$key]['#access']) || $vars['element'][$key]['#access']) {
       if (!empty($vars['element'][$key]['#title'])) {
-        $vars['labels'][$key] = l($vars['element'][$key]['#title'], $_GET['q'], array('fragment' => 'admin-pane-'. $key, 'attributes' => array('class' => $first ? 'admin-pane-active' : '')));
+        $vars['labels'][$key] = l($vars['element'][$key]['#title'], $_GET['q'], array('fragment' => 'admin-pane-' . $key, 'attributes' => array('class' => $first ? 'admin-pane-active' : '')));
         $vars['panels'][$key] = isset($vars['element'][$key]['#children']) ? $vars['element'][$key]['#children'] : $vars['element'][$key]['#value'];
-        $vars['panels'][$key] .= isset($vars['element'][$key]['#description']) ? "<div class='description'>". filter_xss_admin($vars['element'][$key]['#description']) ."</div>" : '';
+        $vars['panels'][$key] .= isset($vars['element'][$key]['#description']) ? "<div class='description'>" . filter_xss_admin($vars['element'][$key]['#description']) . "</div>" : '';
         $first = FALSE;
       }
       else {
@@ -48,9 +48,11 @@ function template_preprocess_admin_panes(&$vars) {
 /**
  * Generate markup for an admin tab.
  */
-function theme_admin_tab($tab, $class = '') {
+function theme_admin_tab($variables) {
+  $tab = $variables['tab'];
+  $class = $variables['class'];
   $attr = isset($tab['attributes']) ? drupal_attributes($tab['attributes']) : '';
-  $class .= !empty($tab['active']) ? ' admin-tab-active': '';
+  $class .= !empty($tab['active']) ? ' admin-tab-active' : '';
   $title = filter_xss_admin($tab['title']);
   return "<div class='admin-tab {$class}'><span {$attr}>{$title}</span></div>";
 }
@@ -59,7 +61,8 @@ function theme_admin_tab($tab, $class = '') {
  * Alternative to menu_tree_output() which uses admin implementations of the
  * core menu theme functions.
  */
-function theme_admin_drilldown_menu_tree_output($tree) {
+function theme_admin_drilldown_menu_tree_output($variables) {
+  $tree = $variables['menu'];
   $output = '';
   $items = array();
 
@@ -80,16 +83,16 @@ function theme_admin_drilldown_menu_tree_output($tree) {
     if ($i == $num_items - 1) {
       $extra_class = 'last';
     }
-    $link = theme('admin_drilldown_menu_item_link', $data['link']);
+    $link = theme('admin_drilldown_menu_item_link', array('item' => $data['link']));
     $in_active_trail = isset($data['link']['in_active_trail']) ? $data['link']['in_active_trail'] : FALSE;
     if ($data['below']) {
-      $output .= theme('admin_drilldown_menu_item', $link, $data['link']['has_children'], theme('admin_drilldown_menu_tree_output', $data['below']), $in_active_trail, $extra_class);
+      $output .= theme('admin_drilldown_menu_item', array('link' => $link, 'has_children' => $data['link']['has_children'], 'menu' => theme('admin_drilldown_menu_tree_output', array('menu' => $data['below'])), 'in_active_trail' => $in_active_trail, 'extra_class' => $extra_class));
     }
     else {
-      $output .= theme('admin_drilldown_menu_item', $link, $data['link']['has_children'], '', $in_active_trail, $extra_class);
+      $output .= theme('admin_drilldown_menu_item', array('link' => $link, 'has_children' => $data['link']['has_children'], 'menu' => '', 'in_active_trail' => $in_active_trail, 'extra_class' => $extra_class));
     }
   }
-  return $output ? theme('admin_drilldown_menu_tree', $output) : '';
+  return $output ? theme('admin_drilldown_menu_tree', array('menu' => $output)) : '';
 }
 
 /**
@@ -97,7 +100,8 @@ function theme_admin_drilldown_menu_tree_output($tree) {
  * Ensures custom theme-level overrides of theme_menu_tree() do not break
  * markup expected by admin.
  */
-function theme_admin_drilldown_menu_tree($tree) {
+function theme_admin_drilldown_menu_tree($variables) {
+  $tree = $variables['menu'];
   return theme_menu_tree($tree);
 }
 
@@ -106,14 +110,20 @@ function theme_admin_drilldown_menu_tree($tree) {
  * Ensures custom theme-level overrides of theme_menu_item() do not break
  * markup expected by admin.
  */
-function theme_admin_drilldown_menu_item($link, $has_children, $menu = '', $in_active_trail = FALSE, $extra_class = NULL) {
+function theme_admin_drilldown_menu_item($variables) {
+  $link = $variables['link'];
+  $has_children = $variables['has_children'];
+  $menu = $variables['menu'];
+  $in_active_trail = $variables['in_active_trail'];
+  $extra_class = $variables['extra_class'];
   return theme_menu_item($link, $has_children, $menu, $in_active_trail, $extra_class);
 }
 
 /**
  * Alternative to theme_menu_item_link().
  */
-function theme_admin_drilldown_menu_item_link($link) {
+function theme_admin_drilldown_menu_item_link($variables) {
+  $link = $variables['item'];
   $link['localized_options'] = empty($link['localized_options']) ? array() : $link['localized_options'];
   $link['localized_options']['html'] = TRUE;
   $link['localized_options']['purl'] = array('disabled' => TRUE);

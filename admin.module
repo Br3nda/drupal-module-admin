@@ -1,12 +1,12 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.26 2010/08/12 18:00:26 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.26.2.1 2010/09/15 19:28:38 jmiccolis Exp $
 
 /**
- * Implementation of hook_init().
+ * Implements hook_init().
  */
 function admin_init() {
   if (arg(0) === 'admin') {
-    menu_set_active_menu_name('admin');
+    //menu_set_active_menu_name('admin');
   }
   if (user_access('use admin toolbar')) {
     $path = drupal_get_path('module', 'admin');
@@ -21,77 +21,81 @@ function admin_init() {
 }
 
 /**
- * Implementation of hook_block().
+ * Implements hook_block_info().
  */
-function admin_block($op = 'list', $delta = 0, $edit = array()) {
-  switch ($op) {
-    case 'list':
-      $blocks = array();
-      $blocks['create'] = array(
-        'info' => t('Create content'),
-        'cache' => BLOCK_NO_CACHE,
-        'admin' => TRUE
-      );
-      $blocks['theme'] = array(
-        'info' => t('Theme switcher'),
-        'cache' => BLOCK_CACHE_PER_ROLE,
-        'admin' => TRUE
-      );
-      $blocks['account'] = array(
-        'info' => t('My Account'),
-        'cache' => BLOCK_NO_CACHE,
-        'admin' => TRUE
-      );
-      if (module_exists('menu')) {
-        $blocks['menu'] = array(
-          'info' => t('Administration menu'),
-          'cache' => BLOCK_CACHE_PER_ROLE,
-          'admin' => TRUE,
+function admin_block_info() {
+  $blocks = array();
+  $blocks['create'] = array(
+    'info' => t('Create content'),
+    'cache' => DRUPAL_NO_CACHE,
+    'admin' => TRUE,
+  );
+  $blocks['theme'] = array(
+    'info' => t('Theme switcher'),
+    'cache' => DRUPAL_CACHE_PER_ROLE,
+    'admin' => TRUE,
+  );
+  $blocks['account'] = array(
+    'info' => t('My Account'),
+    'cache' => DRUPAL_NO_CACHE,
+    'admin' => TRUE,
+  );
+  if (module_exists('menu')) {
+    $blocks['menu'] = array(
+      'info' => t('Administration menu'),
+      'cache' => DRUPAL_CACHE_PER_ROLE,
+      'admin' => TRUE,
+    );
+  }
+  if (module_exists('devel')) {
+    $blocks['devel'] = array(
+      'info' => t('Devel'),
+      'cache' => DRUPAL_NO_CACHE,
+      'admin' => TRUE,
+    );
+  }
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function admin_block_view($delta) {
+  switch ($delta) {
+    case 'create':
+      $item = menu_get_item('node/add');
+      $links = system_admin_menu_block($item);
+      if (!empty($links)) {
+        $menu = array();
+        foreach ($links as $key => $link) {
+          $menu[$key] = array(
+            'link' => $link,
+            'below' => FALSE,
+          );
+        }
+        return array(
+          'subject' => !empty($item['title']) ? $item['title'] : t('Create content'),
+          'content' => theme('admin_drilldown_menu_tree_output', array('menu' => $menu)),
         );
-      }
-      if (module_exists('devel')) {
-        $blocks['devel'] = array(
-          'info' => t('Devel'),
-          'cache' => BLOCK_NO_CACHE,
-          'admin' => TRUE
-        );
-      }
-      return $blocks;
-    case 'view':
-      switch ($delta) {
-        case 'create':
-          $item = menu_get_item('node/add');
-          $links = system_admin_menu_block($item);
-          if (!empty($links)) {
-            $menu = array();
-            foreach ($links as $key => $link) {
-              $menu[$key] = array('link' => $link, 'below' => FALSE);
-            }
-            return array(
-              'subject' => !empty($item['title']) ? $item['title'] : t('Create content'),
-              'content' => theme('admin_drilldown_menu_tree_output', $menu),
-            );
-          }
-          break;
-        case 'theme':
-          module_load_include('inc', 'admin', 'includes/admin.theme');
-          return admin_block_theme();
-        case 'account':
-          return admin_account_block();
-        case 'menu':
-          $item = menu_get_item('admin');
-          if ($item && $item['access']) {
-            return array(
-              'subject' => !empty($item['title']) ? $item['title'] : t('Administer'),
-              'content' => theme('admin_drilldown_menu_tree_output', menu_tree_all_data('admin')),
-            );
-          }
-          break;
-        case 'devel':
-          module_load_include('inc', 'admin', 'includes/admin.devel');
-          return admin_block_devel();
       }
       break;
+    case 'theme':
+      module_load_include('inc', 'admin', 'includes/admin.theme');
+      return admin_block_theme();
+    case 'account':
+      return admin_account_block();
+    case 'menu':
+      $item = menu_get_item('admin');
+      if ($item && $item['access']) {
+        return array(
+          'subject' => !empty($item['title']) ? $item['title'] : t('Administer'),
+          'content' => theme('admin_drilldown_menu_tree_output', array('menu' => menu_tree_all_data('admin'))),
+        );
+      }
+      break;
+    case 'devel':
+      module_load_include('inc', 'admin', 'includes/admin.devel');
+      return admin_block_devel();
   }
 }
 
@@ -105,7 +109,7 @@ function admin_block($op = 'list', $delta = 0, $edit = array()) {
 function admin_block_get_cache_id($block) {
   global $theme, $base_root, $user;
 
-  if ($block->cache != BLOCK_NO_CACHE) {
+  if ($block->cache != DRUPAL_NO_CACHE) {
     $cid_parts = array();
 
     // Start with common sub-patterns: block identification, theme, language.
@@ -121,13 +125,13 @@ function admin_block_get_cache_id($block) {
     if ($user->uid == 1) {
       $cid_parts[] = "u.$user->uid";
     }
-    else if ($block->cache & BLOCK_CACHE_PER_ROLE) {
-      $cid_parts[] = 'r.'. implode(',', array_keys($user->roles));
+    else if ($block->cache & DRUPAL_CACHE_PER_ROLE) {
+      $cid_parts[] = 'r.' . implode(',', array_keys($user->roles));
     }
-    elseif ($block->cache & BLOCK_CACHE_PER_USER) {
+    elseif ($block->cache & DRUPAL_CACHE_PER_USER) {
       $cid_parts[] = "u.$user->uid";
     }
-    if ($block->cache & BLOCK_CACHE_PER_PAGE) {
+    if ($block->cache & DRUPAL_CACHE_PER_PAGE) {
       $cid_parts[] = $base_root . request_uri();
     }
     return implode(':', $cid_parts);
@@ -135,26 +139,21 @@ function admin_block_get_cache_id($block) {
 }
 
 /**
- * Implementation of hook_elements().
+ * Implements hook_element_info().
  */
-function admin_elements() {
+function admin_element_info() {
   return array(
     'admin_panes' => array('#value' => ''),
   );
 }
 
 /**
- * Implementation of hook_menu_alter().
+ * Implements hook_menu_alter().
  */
 function admin_menu_alter(&$items) {
-  // Move admin theme item under ours as a local task.
-  $items['admin/settings/admin/theme'] = $items['admin/settings/admin'];
-  $items['admin/settings/admin/theme']['type'] = MENU_LOCAL_TASK;
-  $items['admin/settings/admin/theme']['weight'] = 10;
-
   // Generate our own admin settings page.
-  $items['admin/settings/admin'] =
-  $items['admin/settings/admin/settings'] = array(
+  $items['admin/config/admin'] =
+  $items['admin/config/admin/settings'] = array(
     'title' => 'Administration tools',
     'description' => 'Settings for site administration tools.',
     'page callback' => 'drupal_get_form',
@@ -165,9 +164,9 @@ function admin_menu_alter(&$items) {
     'file' => 'admin.admin.inc',
     'module' => 'admin',
   );
-  $items['admin/settings/admin/settings']['title'] = 'Settings';
-  $items['admin/settings/admin/settings']['type'] = MENU_DEFAULT_LOCAL_TASK;
-  $items['admin/settings/admin/rebuild'] = array(
+  $items['admin/config/admin/settings']['title'] = 'Settings';
+  $items['admin/config/admin/settings']['type'] = MENU_DEFAULT_LOCAL_TASK;
+  $items['admin/config/admin/rebuild'] = array(
     'title' => 'Rebuild',
     'description' => 'Wipe and rebuild the administrative menu.',
     'page callback' => 'drupal_get_form',
@@ -180,6 +179,7 @@ function admin_menu_alter(&$items) {
     'weight' => 10,
   );
 
+return;
   foreach ($items as $path => $item) {
     $item['type'] = isset($item['type']) ? $item['type'] : MENU_NORMAL_ITEM;
     // Move all admin/* items to admin menu links except local tasks, callbacks.
@@ -202,16 +202,17 @@ function admin_menu_alter(&$items) {
  * to any of its child menu items.
  */
 function admin_landing_page_access($path) {
+return;
   static $paths;
   if (!isset($paths[$path])) {
-    $item = db_fetch_array(db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = '%s' AND module = 'system'", $path));
+    $item = db_query("SELECT mlid, menu_name FROM {menu_links} ml WHERE ml.router_path = :ml.router_path AND module = :module", array(':ml.router_path' => $path, ':module' => 'system'));
     $result = db_query("
       SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description, ml.*
       FROM {menu_links} ml
       LEFT JOIN {menu_router} m ON ml.link_path = m.path
-      WHERE ml.plid = %d AND ml.menu_name = '%s' AND hidden = 0", $item['mlid'], $item['menu_name']);
+      WHERE ml.plid = %d AND ml.menu_name = '%s' AND hidden = 0", $item[0]['mlid'], $item[0]['menu_name']);
     $paths[$path] = FALSE;
-    while ($item = db_fetch_array($result)) {
+    foreach ($result as $item) {
       _menu_link_translate($item);
       if ($item['access']) {
         $paths[$path] = TRUE;
@@ -223,24 +224,32 @@ function admin_landing_page_access($path) {
 }
 
 /**
- * Implementation of hook_perm().
+ * Implements hook_permission().
  */
-function admin_perm() {
-  return array('use admin toolbar');
+function admin_permission() {
+  return array(
+    'use admin toolbar' => array(
+      'title' => t('use admin toolbar'),
+      'description' => t('TODO Add a description for \'use admin toolbar\''),
+    ),
+  );
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function admin_theme($cache, $type, $theme, $path) {
   $path = drupal_get_path('module', 'admin');
   $items['admin_tab'] = array(
-    'arguments' => array('tab' => array(), 'class' => ''),
+    'variables' => array(
+      'tab' => array(),
+      'class' => '',
+    ),
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
   $items['admin_toolbar'] = array(
-    'arguments' => array(
+    'variables' => array(
       'blocks' => array(),
       'position' => 'ne',
       'layout' => 'horizontal',
@@ -251,17 +260,17 @@ function admin_theme($cache, $type, $theme, $path) {
     'file' => 'theme.inc',
   );
   $items['admin_drilldown_menu_tree_output'] = array(
-    'arguments' => array('menu' => array()),
+    'variables' => array('menu' => array()),
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
   $items['admin_drilldown_menu_tree'] = array(
-    'arguments' => array('menu' => array()),
+    'variables' => array('menu' => array()),
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
   $items['admin_drilldown_menu_item'] = array(
-    'arguments' => array(
+    'variables' => array(
       'link' => NULL,
       'has_children' => NULL,
       'menu' => '',
@@ -272,18 +281,18 @@ function admin_theme($cache, $type, $theme, $path) {
     'file' => 'theme.inc',
   );
   $items['admin_drilldown_menu_item_link'] = array(
-    'arguments' => array('item' => array()),
+    'variables' => array('item' => array()),
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
   $items['admin_panes'] = array(
-    'arguments' => array('element' => array()),
+    'render element' => 'element',
     'template' => 'admin-panes',
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
   $items['admin_settings_form'] = array(
-    'arguments' => array('element' => array()),
+    'render element' => 'element',
     'path' => $path,
     'file' => 'admin.admin.inc',
   );
@@ -291,7 +300,7 @@ function admin_theme($cache, $type, $theme, $path) {
 }
 
 /**
- * Implementation of hook_theme_registry_alter().
+ * Implements hook_theme_registry_alter().
  */
 function admin_theme_registry_alter(&$theme_registry) {
   // Remove any existing instances of our pre page preprocessor.
@@ -352,12 +361,12 @@ function admin_get_default_blocks($reset = FALSE) {
     }
     else {
       $defaults = array();
-      foreach (module_implements('block') as $module) {
-        $module_blocks = module_invoke($module, 'block', 'list');
+      foreach (module_implements('block_info') as $module) {
+        $module_blocks = module_invoke($module, 'block_info');
         if ($module_blocks) {
           foreach ($module_blocks as $delta => $info) {
             if (isset($info['admin'])) {
-              $defaults["{$module}-{$delta}"] = isset($info['cache']) ? $info['cache'] : BLOCK_NO_CACHE;
+              $defaults["{$module}-{$delta}"] = isset($info['cache']) ? $info['cache'] : DRUPAL_NO_CACHE;
             }
           }
         }
@@ -384,7 +393,7 @@ function admin_set_admin_blocks($reset = FALSE) {
           $block = new stdClass();
           $block->module = $module;
           $block->delta = $delta;
-          $block->cache = is_numeric($cache) ? $cache : BLOCK_NO_CACHE;
+          $block->cache = is_numeric($cache) ? $cache : DRUPAL_NO_CACHE;
           $block->region = 'admin_toolbar'; // Fake the block region.
         }
         if (!empty($block)) {
@@ -406,7 +415,7 @@ function admin_set_admin_blocks($reset = FALSE) {
             }
             if ($block->module === 'block') {
               global $theme;
-              $block->subject = db_result(db_query("SELECT title FROM {blocks} WHERE module = 'block' AND delta = '%s'", $delta));
+              $block->subject = db_query("SELECT title FROM {block} WHERE module = :module AND delta = :delta", array(':module' => 'block', ':delta' => $delta))->fetchField();
             }
             // This is here simpy to trigger any preprocess functions that may
             // add javascript, etc. for this block. Note that the output is
@@ -432,22 +441,22 @@ function admin_get_admin_blocks($reset = FALSE) {
 /**
  * Preprocessor that runs *before* template_preprocess_page().
  */
-function admin_preprocess_pre_page(&$vars) {
+function admin_page_build(&$vars) {
   admin_set_admin_blocks();
   if (user_access('use admin toolbar') && $trail = menu_get_active_trail()) {
     do {
       $last = array_pop($trail);
     } while (count($trail) && !($last['type'] & MENU_VISIBLE_IN_TREE));
     if ($last) {
-      drupal_add_js(array('activePath' => url($last['href'])), 'setting');
+      drupal_add_js(array('activePath' => url($last['href'])), array('type' => 'setting', 'scope' => JS_DEFAULT));
     }
   }
 }
 
 /**
- * Implementation of hook_preprocess_page().
+ * Implements hook_preprocess_html().
  */
-function admin_preprocess_page(&$vars) {
+function admin_preprocess_html(&$vars) {
   if (!admin_suppress(FALSE) && $blocks = admin_get_admin_blocks()) {
     $position = admin_get_settings('position');
     $layout = admin_get_settings('layout');
@@ -458,7 +467,7 @@ function admin_preprocess_page(&$vars) {
 }
 
 /**
- * Implementation of hook_footer().
+ * Implements hook_footer().
  */
 function admin_footer() {
   if (!admin_suppress(FALSE) && $blocks = admin_get_admin_blocks()) {
@@ -466,12 +475,12 @@ function admin_footer() {
     $layout = admin_get_settings('layout');
     $behavior = admin_get_settings('behavior');
     $class = admin_get_settings('expanded') ? 'admin-expanded' : '';
-    return theme('admin_toolbar', $blocks, $position, $layout, $behavior);
+    return theme('admin_toolbar', array('blocks' => $blocks, 'position' => $position, 'layout' => $layout, 'behavior' => $behavior));
   }
 }
 
 /**
- * Implementation of hook_suppress().
+ * Implements hook_suppress().
  *
  * Suppress display of administration toolbar.
  *
@@ -504,19 +513,19 @@ function admin_account_block() {
   if ($user->uid > 0) {
     $menu = array();
     $menu[] = array(
-      'data' => l(t('View my account'), 'user/'. $user->uid),
+      'data' => l(t('View my account'), 'user/' . $user->uid),
       'class' => 'leaf',
     );
     $menu[] = array(
-      'data' => l(t('Edit my account'), 'user/'. $user->uid .'/edit'),
+      'data' => l(t('Edit my account'), 'user/' . $user->uid . '/edit'),
       'class' => 'leaf',
     );
     $menu[] = array(
-      'data' => l(t('Logout'), 'logout'),
+      'data' => l(t('Logout'), 'user/logout'),
       'class' => 'leaf',
     );
 
-    $block['content'] = theme('item_list', $menu, NULL, 'ul', array('class' => 'menu'));
+    $block['content'] = theme('item_list', array('items' => $menu, 'title' => NULL, 'type' => 'ul', 'attributes' => array('class' => 'menu')));
   }
   return $block;
 }

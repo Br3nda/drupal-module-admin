@@ -1,5 +1,14 @@
-; $Id: admin.info,v 1.1.2.2.2.1 2009/11/20 02:44:31 yhahn Exp $
+; $Id: admin.info,v 1.1.2.2.2.1.2.1 2010/09/15 19:28:38 jmiccolis Exp $
 name = "Admin"
 description = "UI helpers for Drupal admins and managers."
 package = "Administration"
-core = 6.x
+core = 7.x
+
+files[] = admin.admin.inc
+files[] = admin.install
+files[] = admin.module
+files[] = includes/admin.devel.inc
+files[] = includes/admin.theme.inc
+files[] = theme/admin-panes.tpl.php
+files[] = theme/admin-toolbar.tpl.php
+files[] = theme/theme.inc
