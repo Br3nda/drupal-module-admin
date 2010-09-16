@@ -4,13 +4,13 @@
   <div class='admin-blocks admin-blocks-<?php print count($blocks) ?>'>
     <div class='admin-tabs clear-block'>
       <?php foreach ($tabs as $bid => $tab): ?>
-        <?php print theme('admin_tab', $tab, $bid); ?>
+        <?php print theme('admin_tab', array('tab' => $tab, 'bid' => $bid)); ?>
       <?php endforeach; ?>
     </div>
 
     <?php foreach ($blocks as $bid => $block): ?>
       <div class='admin-block <?php if (isset($block->class)) print $block->class ?>' id='block-<?php print $bid ?>'>
-        <div class='block-content clear-block'><?php print $block->content ?></div>
+        <div class='block-content clear-block'><?php print render($block->content) ?></div>
       </div>
     <?php endforeach; ?>
   </div>
