@@ -8,8 +8,8 @@
       <?php endforeach; ?>
     </div>
 
-    <?php foreach ($blocks as $bid => $block): ?>
-      <div class='admin-block <?php if (isset($block->class)) print $block->class ?>' id='block-<?php print $bid ?>'>
+    <?php foreach ($blocks as $block): ?>
+      <div class='admin-block <?php if (isset($block->class)) print $block->class ?>' id='block-<?php print $block->bid ?>'>
         <div class='block-content clear-block'><?php print render($block->content) ?></div>
       </div>
     <?php endforeach; ?>

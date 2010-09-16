@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.module,v 1.1.2.23.2.26.2.2 2010/09/16 16:55:43 yhahn Exp $
+// $Id: admin.module,v 1.1.2.23.2.26.2.3 2010/09/16 18:30:41 yhahn Exp $
 
 /**
  * Implements hook_block_info().
@@ -91,7 +91,10 @@ function admin_block_view($delta) {
  */
 function admin_element_info() {
   return array(
-    'admin_panes' => array('#value' => ''),
+    'admin_panes' => array(
+      '#value' => '',
+      '#theme_wrappers' => array('admin_panes'),
+    ),
   );
 }
 
@@ -330,6 +333,7 @@ function admin_get_admin_blocks() {
         $block = new stdClass();
         $block->module = $module;
         $block->delta = $delta;
+        $block->bid = $bid;
         $block->title = NULL;
         $block->cache = is_numeric($cache) ? $cache : DRUPAL_NO_CACHE;
         $block->region = 'admin_toolbar'; // Fake the block region.
