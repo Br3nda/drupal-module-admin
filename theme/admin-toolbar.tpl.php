@@ -4,7 +4,7 @@
   <div class='admin-blocks admin-blocks-<?php print count($blocks) ?>'>
     <div class='admin-tabs clear-block'>
       <?php foreach ($tabs as $bid => $tab): ?>
-        <?php print theme('admin_tab', array('tab' => $tab, 'bid' => $bid)); ?>
+        <?php print theme('admin_tab', array('tab' => $tab, 'class' => $bid)); ?>
       <?php endforeach; ?>
     </div>
 
