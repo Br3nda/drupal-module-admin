@@ -1,6 +1,8 @@
-// $Id: admin.devel.js,v 1.1.2.1 2009/11/20 02:44:32 yhahn Exp $
+// $Id: admin.devel.js,v 1.1.2.1.2.1 2010/09/16 16:47:55 yhahn Exp $
+(function($) {
 
-Drupal.behaviors.adminDevel = function(context) {
+Drupal.behaviors.adminDevel = {};
+Drupal.behaviors.adminDevel.attach = function(context) {
   $('#block-admin-devel:not(.admin-processed)').each(function() {
     var devel = $(this);
     devel.addClass('admin-processed');
@@ -31,3 +33,5 @@ Drupal.behaviors.adminDevel = function(context) {
     });
   });
 };
+
+})(jQuery);
