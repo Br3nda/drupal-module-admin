@@ -15,19 +15,14 @@ function admin_block_devel() {
  * Devel admin block form.
  */
 function admin_block_devel_form($form, $form_state) {
-  // @TODO: Update.
-  return;
   $panes = array();
   if (user_access('access devel information')) {
-    $panes[] = admin_devel_performance_form();
+    $panes['performance'] = admin_devel_performance_form();
   }
   if (user_access('switch users')) {
     $panes['switch_user'] = array(
       '#title' => t('Switch user'),
-      'list' => array(
-        '#type' => 'markup',
-        '#value' => theme('links', array('links' => devel_switch_user_list())),
-      ),
+      'list' => array('#markup' => theme('links', array('links' => devel_switch_user_list()))),
       'user' => devel_switch_user_form(),
     );
     $panes['switch_user']['user']['#submit'] = array('devel_switch_user_form_submit');
@@ -37,11 +32,8 @@ function admin_block_devel_form($form, $form_state) {
     $panes['execute']['op']['#submit'] = array('devel_execute_form_submit');
   }
   if (user_access('access devel information')) {
-    $panes['menu'] = array(
-      '#title' => t('Other tools'),
-      '#type' => 'markup',
-      '#value' => menu_tree_output(menu_tree_all_data('devel')),
-    );
+    $panes['menu'] = menu_tree_output(menu_tree_all_data('devel'));
+    $panes['menu']['#title'] = t('Other tools');
   }
   if (!empty($panes)) {
     $panes['#type'] = 'admin_panes';
@@ -58,13 +50,13 @@ function admin_devel_performance_form() {
   if (variable_get('dev_timer', 0) && !variable_get('devel_query_display', FALSE)) {
     $items[] = array(
       'data' => "<div class='dev-info'></div>",
-      'class' => 'dev-timer',
+      'class' => array('dev-timer'),
     );
   }
   if (variable_get('dev_mem', FALSE) && function_exists('memory_get_usage')) {
     $items[] = array(
       'data' => "<div class='dev-info'></div>",
-      'class' => 'dev-memory-usage',
+      'class' => array('dev-memory-usage'),
     );
   }
   if (variable_get('devel_query_display', FALSE)) {
@@ -72,14 +64,13 @@ function admin_devel_performance_form() {
     $hide = "<input type='button' class='form-submit dev-querylog-hide' value='" . t('Hide querylog') . "'/>";
     $items[] = array(
       'data' => "<div class='dev-info'></div>{$show}{$hide}",
-      'class' => 'dev-query',
+      'class' => array('dev-query'),
     );
   }
   if ($items) {
     return array(
       '#title' => t('Performance'),
-      '#value' => theme('item_list', array('items' => $items)),
-      '#type' => 'markup',
+      '#markup' => theme('item_list', array('items' => $items)),
     );
   }
 }
