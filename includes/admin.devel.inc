@@ -15,6 +15,8 @@ function admin_block_devel() {
  * Devel admin block form.
  */
 function admin_block_devel_form($form, $form_state) {
+  // @TODO: Update.
+  return;
   $panes = array();
   if (user_access('access devel information')) {
     $panes[] = admin_devel_performance_form();
