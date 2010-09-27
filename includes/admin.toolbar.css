@@ -1,4 +1,4 @@
-/* $Id: admin.toolbar.css,v 1.1.2.8 2009/12/16 06:16:04 yhahn Exp $ */
+/* $Id: admin.toolbar.css,v 1.1.2.8.2.1 2010/09/27 07:32:25 yhahn Exp $ */
 
 /**
  * Base styles ========================================================
@@ -14,6 +14,8 @@ div#admin-toolbar a {
   color:#fff;
   font-weight:normal;
   }
+
+html.overlay-open div#admin-toolbar { z-index:600; }
 
 /**
  * Toolbar background =================================================
